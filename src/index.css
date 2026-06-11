@@ -30,12 +30,14 @@
   --color-crust: var(--ctp-crust);
   --color-accent: var(--ctp-accent);
   --color-accent-hover: var(--ctp-accent-hover);
-  
+
   --shadow-accent-glow: 0 0 15px var(--ctp-accent-glow);
   --font-sans: 'Outfit', 'Inter', sans-serif;
 }
 
-*, ::before, ::after {
+*,
+::before,
+::after {
   --color-rosewater: var(--ctp-rosewater);
   --color-flamingo: var(--ctp-flamingo);
   --color-pink: var(--ctp-pink);
@@ -215,54 +217,25 @@ body {
 ::-webkit-scrollbar {
   width: 6px;
 }
+
 ::-webkit-scrollbar-track {
   background: var(--ctp-mantle);
 }
+
 ::-webkit-scrollbar-thumb {
   background: var(--ctp-surface2);
   border-radius: 3px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: var(--ctp-overlay0);
 }
 
-/* Premium Range Sliders */
-input[type=range] {
+
+
+/* Hide number input spinners */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
-  appearance: none;
-  background: var(--ctp-surface1);
-  height: 5px;
-  border-radius: 9999px;
-  outline: none;
-  transition: background-color 0.2s ease;
-}
-input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: var(--ctp-accent);
-  cursor: pointer;
-  border: 2px solid var(--ctp-mantle);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-  transition: transform 0.1s ease, background-color 0.2s ease;
-}
-input[type=range]::-webkit-slider-thumb:hover {
-  transform: scale(1.25);
-  background: var(--ctp-accent-hover);
-}
-input[type=range]::-moz-range-thumb {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--ctp-accent);
-  cursor: pointer;
-  border: 2px solid var(--ctp-mantle);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-  transition: transform 0.1s ease, background-color 0.2s ease;
-}
-input[type=range]::-moz-range-thumb:hover {
-  transform: scale(1.25);
-  background: var(--ctp-accent-hover);
+  margin: 0;
 }

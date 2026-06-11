@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Play, 
-  Pause, 
-  Settings as SettingsIcon, 
-  Plus, 
-  Trash2, 
-  X, 
-  Check, 
-  Square, 
-  CheckSquare 
+import {
+  Play,
+  Pause,
+  Settings as SettingsIcon,
+  Plus,
+  Trash2,
+  X,
+  Check,
+  Square,
+  CheckSquare
 } from 'lucide-react';
 
 interface Settings {
@@ -92,7 +92,7 @@ const storage = {
   },
   set: (data: any, callback?: () => void) => {
     if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
-      chrome.storage.local.set(data, callback || (() => {}));
+      chrome.storage.local.set(data, callback || (() => { }));
     } else {
       Object.keys(data).forEach(key => {
         localStorage.setItem(key, JSON.stringify(data[key]));
@@ -150,7 +150,7 @@ const messaging = {
         settings: DEFAULT_SETTINGS,
         completedTodayCount: 0,
       } as TimerState;
-      
+
       if (message.type === 'START') {
         state.isRunning = true;
         state.endTime = Date.now() + state.timeLeft * 1000;
@@ -181,11 +181,11 @@ const messaging = {
           state.duration = state.timeLeft;
         }
       }
-      
+
       localStorage.setItem('timerState', JSON.stringify(state));
       // Dispatch storage change to update local listeners
       window.dispatchEvent(new Event('storage_mock'));
-      
+
       if (callback) callback(state);
     }
   }
@@ -195,19 +195,19 @@ export default function App() {
   // Timer State
   const [state, setState] = useState<TimerState>(DEFAULT_STATE);
   const [timeLeft, setTimeLeft] = useState<number>(DEFAULT_STATE.timeLeft);
-  
+
   // Tasks State
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [newTaskText, setNewTaskText] = useState('');
-  
+
   // UI Customization State (Stored separately or in settings)
   const [themeFlavor, setThemeFlavor] = useState<string>('theme-latte');
   const [themeAccent, setThemeAccent] = useState<string>('green');
-  
+
   // Modals
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  
+
   // Settings Form State
   const [formPomo, setFormPomo] = useState(25);
   const [formShort, setFormShort] = useState(5);
@@ -236,7 +236,7 @@ export default function App() {
       if (result.timerState) {
         setState(result.timerState);
         setTimeLeft(result.timerState.timeLeft);
-        
+
         // Sync settings form
         const s = result.timerState.settings;
         setFormPomo(s.pomoTime);
@@ -313,16 +313,16 @@ export default function App() {
     messaging.sendMessage({ type: 'SKIP' });
   };
 
-  // Handle Dynamic Sliders Customization
-  const handleSliderChange = (key: 'pomoTime' | 'shortBreakTime', value: number) => {
+  // Handle Duration Customization
+  const handleDurationChange = (key: 'pomoTime' | 'shortBreakTime', value: number) => {
     const updatedSettings: Settings = {
       ...state.settings,
       [key]: value
     };
-    
-    messaging.sendMessage({ 
-      type: 'UPDATE_SETTINGS', 
-      settings: updatedSettings 
+
+    messaging.sendMessage({
+      type: 'UPDATE_SETTINGS',
+      settings: updatedSettings
     });
   };
 
@@ -371,17 +371,17 @@ export default function App() {
       soundEnabled: formSound,
       notificationsEnabled: formNotify,
     };
-    
+
     // Update Theme and Accent locally and in storage
-    storage.set({ 
-      themeFlavor, 
-      themeAccent 
+    storage.set({
+      themeFlavor,
+      themeAccent
     });
 
     // Send update command to background script
-    messaging.sendMessage({ 
-      type: 'UPDATE_SETTINGS', 
-      settings: updatedSettings 
+    messaging.sendMessage({
+      type: 'UPDATE_SETTINGS',
+      settings: updatedSettings
     });
 
     setIsSettingsOpen(false);
@@ -409,21 +409,21 @@ export default function App() {
   } as React.CSSProperties;
 
   return (
-    <div 
-      className={`w-full min-h-screen ${themeFlavor} bg-base text-text flex flex-col p-4 select-none relative transition-colors duration-300`} 
+    <div
+      className={`w-full min-h-screen ${themeFlavor} bg-base text-text flex flex-col p-4 select-none relative transition-colors duration-300`}
       style={themeAccentStyle}
     >
       {/* Header */}
       <header className="flex justify-between items-center mb-3">
         <div className="flex items-center gap-2">
-          <img 
-            src="icons/icon128.png" 
-            alt="PomoFocus Logo" 
+          <img
+            src="icons/icon128.png"
+            alt="PomoFocus Logo"
             className="w-7 h-7 rounded-full shadow-sm object-cover"
           />
           <h1 className="font-bold text-[18px] tracking-tight text-text">PomoFocus</h1>
         </div>
-        <button 
+        <button
           onClick={openSettings}
           className="p-1.5 rounded-full hover:bg-surface0 text-subtext0 hover:text-text transition-colors duration-200"
         >
@@ -431,36 +431,58 @@ export default function App() {
         </button>
       </header>
 
-      {/* Dynamic Duration Sliders Customization (In One Line) */}
-      <div className="bg-mantle rounded-2xl p-2.5 mb-4 border border-surface0 flex gap-3 text-xs font-semibold text-subtext0 items-center">
-        <div className="flex-1 flex items-center gap-2 min-w-0">
-          <span className="flex-shrink-0 text-[11px] font-bold">Focus:</span>
-          <input 
-            type="range" 
-            min="5" 
-            max="60" 
-            step="5" 
-            value={state.settings.pomoTime} 
-            onChange={(e) => handleSliderChange('pomoTime', parseInt(e.target.value))}
-            className="flex-grow min-w-[30px] cursor-pointer"
-          />
-          <span className="flex-shrink-0 text-accent font-extrabold w-8 text-right">{state.settings.pomoTime}m</span>
+      {/* Dynamic Duration Customization (In One Line, Input Only) */}
+      <div className="bg-mantle rounded-2xl p-2.5 mb-4 border border-surface0 flex gap-6 text-xs font-semibold text-subtext0 items-center justify-center">
+        <div className="flex items-center gap-2">
+          <span className="text-[11px] font-bold">Focus:</span>
+          <div className="flex items-center gap-0.5">
+            <input
+              type="number"
+              min="1"
+              max="999"
+              value={state.settings.pomoTime === 0 ? '' : state.settings.pomoTime}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val.length > 3) return;
+                handleDurationChange('pomoTime', val === '' ? 0 : parseInt(val) || 0);
+              }}
+              onBlur={() => {
+                if (state.settings.pomoTime < 1) {
+                  handleDurationChange('pomoTime', 1);
+                }
+              }}
+              className="w-8 bg-surface0 border border-surface1 rounded text-center text-accent font-extrabold text-[11px] focus:outline-none focus:border-accent p-0.5"
+              style={{ MozAppearance: 'textfield' }}
+            />
+            <span className="text-[10px] font-extrabold text-accent">m</span>
+          </div>
         </div>
-        
+
         <div className="w-[1px] bg-surface1 self-stretch"></div>
 
-        <div className="flex-1 flex items-center gap-2 min-w-0">
-          <span className="flex-shrink-0 text-[11px] font-bold">Break:</span>
-          <input 
-            type="range" 
-            min="5" 
-            max="30" 
-            step="5" 
-            value={state.settings.shortBreakTime} 
-            onChange={(e) => handleSliderChange('shortBreakTime', parseInt(e.target.value))}
-            className="flex-grow min-w-[30px] cursor-pointer"
-          />
-          <span className="flex-shrink-0 text-accent font-extrabold w-8 text-right">{state.settings.shortBreakTime}m</span>
+        <div className="flex items-center gap-2">
+          <span className="text-[11px] font-bold">Break:</span>
+          <div className="flex items-center gap-0.5">
+            <input
+              type="number"
+              min="1"
+              max="999"
+              value={state.settings.shortBreakTime === 0 ? '' : state.settings.shortBreakTime}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val.length > 3) return;
+                handleDurationChange('shortBreakTime', val === '' ? 0 : parseInt(val) || 0);
+              }}
+              onBlur={() => {
+                if (state.settings.shortBreakTime < 1) {
+                  handleDurationChange('shortBreakTime', 1);
+                }
+              }}
+              className="w-8 bg-surface0 border border-surface1 rounded text-center text-accent font-extrabold text-[11px] focus:outline-none focus:border-accent p-0.5"
+              style={{ MozAppearance: 'textfield' }}
+            />
+            <span className="text-[10px] font-extrabold text-accent">m</span>
+          </div>
         </div>
       </div>
 
@@ -491,7 +513,7 @@ export default function App() {
               fill="transparent"
             />
           </svg>
-          
+
           {/* Large Time Text */}
           <div className="absolute flex flex-col items-center justify-center">
             <span className="text-[38px] font-bold tracking-tight text-text tabular-nums leading-none">
@@ -505,7 +527,7 @@ export default function App() {
 
         {/* Action Buttons */}
         <div className="flex items-center gap-3 mt-4 w-full px-4">
-          <button 
+          <button
             onClick={toggleTimer}
             className="flex-1 py-2.5 rounded-full bg-accent hover:bg-accent-hover text-base font-bold flex items-center justify-center gap-2 shadow-sm shadow-accent-glow active:scale-[0.98] transition-all duration-200"
           >
@@ -521,8 +543,8 @@ export default function App() {
               </>
             )}
           </button>
-          
-          <button 
+
+          <button
             onClick={skipTimer}
             className="px-6 py-2.5 rounded-full bg-surface0 hover:bg-surface1 text-text font-semibold active:scale-[0.98] transition-all duration-200"
           >
@@ -535,9 +557,9 @@ export default function App() {
       <div className="bg-mantle rounded-2xl p-3 flex-grow flex flex-col border border-surface0 max-h-[200px] overflow-hidden">
         <div className="flex justify-between items-center mb-2 pb-1 border-b border-surface1">
           <h2 className="font-bold text-sm text-text">Today's Tasks</h2>
-          
+
           {!isAddingTask && (
-            <button 
+            <button
               onClick={() => setIsAddingTask(true)}
               className="flex items-center gap-1 text-[11px] font-bold px-2 py-1 rounded-full bg-surface0 text-accent hover:bg-surface1 transition-all duration-200"
             >
@@ -550,23 +572,23 @@ export default function App() {
         {/* Task Form inline */}
         {isAddingTask && (
           <form onSubmit={handleAddTask} className="flex gap-2 mb-2 items-center">
-            <input 
-              type="text" 
-              placeholder="What are you working on?" 
+            <input
+              type="text"
+              placeholder="What are you working on?"
               value={newTaskText}
               onChange={(e) => setNewTaskText(e.target.value)}
               className="flex-grow text-xs px-2.5 py-1.5 rounded-lg bg-base text-text placeholder-subtext1 border border-surface1 focus:outline-none focus:border-accent"
               autoFocus
             />
             <div className="flex gap-1">
-              <button 
+              <button
                 type="submit"
                 className="p-1.5 rounded-lg bg-accent text-base hover:opacity-90"
               >
                 <Check className="w-3.5 h-3.5" />
               </button>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={() => setIsAddingTask(false)}
                 className="p-1.5 rounded-lg bg-surface1 text-text hover:bg-surface2"
               >
@@ -584,11 +606,11 @@ export default function App() {
             </div>
           ) : (
             tasks.map((task, index) => (
-              <div 
-                key={task.id} 
+              <div
+                key={task.id}
                 className="group flex items-center justify-between p-2 rounded-xl bg-base border border-surface0 hover:border-surface2 transition-all duration-200"
               >
-                <div 
+                <div
                   onClick={() => toggleTask(task.id)}
                   className="flex items-center gap-2 cursor-pointer flex-grow min-w-0"
                 >
@@ -604,7 +626,7 @@ export default function App() {
                     {task.text}
                   </span>
                 </div>
-                <button 
+                <button
                   onClick={() => deleteTask(task.id)}
                   className="opacity-0 group-hover:opacity-100 p-1 rounded-md text-red hover:bg-surface0 hover:text-red transition-all duration-200 flex-shrink-0"
                 >
@@ -614,7 +636,7 @@ export default function App() {
             ))
           )}
         </div>
-        
+
         {/* Completed footer */}
         {tasks.length > 0 && (
           <div className="text-center text-[10px] font-bold text-subtext1 mt-2 pt-1.5 border-t border-surface1/60">
@@ -627,14 +649,14 @@ export default function App() {
       {isSettingsOpen && (
         <div className="absolute inset-0 bg-crust/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-mantle border border-surface1 rounded-2xl w-full max-h-[90%] overflow-y-auto flex flex-col p-4 shadow-xl animate-in fade-in zoom-in-95 duration-200">
-            
+
             {/* Modal Header */}
             <div className="flex justify-between items-center mb-3 pb-2 border-b border-surface1">
               <h3 className="font-bold text-base text-text flex items-center gap-2">
                 <SettingsIcon className="w-4 h-4 text-accent" />
                 Configuration
               </h3>
-              <button 
+              <button
                 onClick={() => setIsSettingsOpen(false)}
                 className="p-1 rounded-md text-subtext0 hover:bg-surface0 hover:text-text"
               >
@@ -644,40 +666,40 @@ export default function App() {
 
             {/* Modal Body */}
             <div className="space-y-4 text-xs">
-              
+
               {/* Duration Settings */}
               <div>
                 <h4 className="font-bold text-subtext0 mb-2">Timer Durations (Minutes)</h4>
                 <div className="grid grid-cols-3 gap-2">
                   <div>
                     <label className="block text-[10px] text-subtext1 mb-1 font-semibold">Focus</label>
-                    <input 
-                      type="number" 
+                    <input
+                      type="number"
                       min="1"
                       max="120"
-                      value={formPomo} 
+                      value={formPomo}
                       onChange={(e) => setFormPomo(parseInt(e.target.value) || 25)}
                       className="w-full bg-base border border-surface1 rounded-lg px-2 py-1 focus:outline-none focus:border-accent text-center text-text font-bold"
                     />
                   </div>
                   <div>
                     <label className="block text-[10px] text-subtext1 mb-1 font-semibold">Short Break</label>
-                    <input 
-                      type="number" 
+                    <input
+                      type="number"
                       min="1"
                       max="60"
-                      value={formShort} 
+                      value={formShort}
                       onChange={(e) => setFormShort(parseInt(e.target.value) || 5)}
                       className="w-full bg-base border border-surface1 rounded-lg px-2 py-1 focus:outline-none focus:border-accent text-center text-text font-bold"
                     />
                   </div>
                   <div>
                     <label className="block text-[10px] text-subtext1 mb-1 font-semibold">Long Break</label>
-                    <input 
-                      type="number" 
+                    <input
+                      type="number"
                       min="1"
                       max="60"
-                      value={formLong} 
+                      value={formLong}
                       onChange={(e) => setFormLong(parseInt(e.target.value) || 15)}
                       className="w-full bg-base border border-surface1 rounded-lg px-2 py-1 focus:outline-none focus:border-accent text-center text-text font-bold"
                     />
@@ -728,17 +750,17 @@ export default function App() {
               <div className="space-y-2.5 pt-2 border-t border-surface1/60">
                 <label className="flex items-center justify-between cursor-pointer">
                   <span className="font-semibold text-text">Alarm Sound (Offscreen Synth)</span>
-                  <input 
+                  <input
                     type="checkbox"
                     checked={formSound}
                     onChange={(e) => setFormSound(e.target.checked)}
                     className="w-4 h-4 rounded text-accent focus:ring-accent border-surface2 bg-base"
                   />
                 </label>
-                
+
                 <label className="flex items-center justify-between cursor-pointer">
                   <span className="font-semibold text-text">Desktop Notifications</span>
-                  <input 
+                  <input
                     type="checkbox"
                     checked={formNotify}
                     onChange={(e) => setFormNotify(e.target.checked)}
@@ -751,13 +773,13 @@ export default function App() {
 
             {/* Modal Actions */}
             <div className="flex gap-2 mt-5">
-              <button 
+              <button
                 onClick={saveSettings}
                 className="flex-1 py-2 rounded-xl bg-accent text-base font-bold shadow-sm active:scale-[0.98] transition-all hover:bg-accent-hover"
               >
                 Save Changes
               </button>
-              <button 
+              <button
                 onClick={() => setIsSettingsOpen(false)}
                 className="px-4 py-2 rounded-xl bg-surface0 hover:bg-surface1 text-text font-semibold active:scale-[0.98] transition-all"
               >

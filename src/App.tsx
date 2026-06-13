@@ -209,9 +209,6 @@ export default function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   // Settings Form State
-  const [formPomo, setFormPomo] = useState(25);
-  const [formShort, setFormShort] = useState(5);
-  const [formLong, setFormLong] = useState(15);
   const [formSound, setFormSound] = useState(true);
   const [formNotify, setFormNotify] = useState(true);
 
@@ -239,9 +236,6 @@ export default function App() {
 
         // Sync settings form
         const s = result.timerState.settings;
-        setFormPomo(s.pomoTime);
-        setFormShort(s.shortBreakTime);
-        setFormLong(s.longBreakTime);
         setFormSound(s.soundEnabled);
         setFormNotify(s.notificationsEnabled);
       }
@@ -365,9 +359,9 @@ export default function App() {
   // Save Settings
   const saveSettings = () => {
     const updatedSettings: Settings = {
-      pomoTime: formPomo,
-      shortBreakTime: formShort,
-      longBreakTime: formLong,
+      pomoTime: state.settings.pomoTime,
+      shortBreakTime: state.settings.shortBreakTime,
+      longBreakTime: state.settings.longBreakTime,
       soundEnabled: formSound,
       notificationsEnabled: formNotify,
     };
@@ -389,9 +383,6 @@ export default function App() {
 
   // Open settings & load state
   const openSettings = () => {
-    setFormPomo(state.settings.pomoTime);
-    setFormShort(state.settings.shortBreakTime);
-    setFormLong(state.settings.longBreakTime);
     setFormSound(state.settings.soundEnabled);
     setFormNotify(state.settings.notificationsEnabled);
     setIsSettingsOpen(true);
@@ -667,45 +658,6 @@ export default function App() {
             {/* Modal Body */}
             <div className="space-y-4 text-xs">
 
-              {/* Duration Settings */}
-              <div>
-                <h4 className="font-medium text-subtext0 mb-2">Timer Durations (Minutes)</h4>
-                <div className="grid grid-cols-3 gap-2">
-                  <div>
-                    <label className="block text-[10px] text-subtext2 mb-1 font-medium">Focus</label>
-                    <input
-                      type="number"
-                      min="1"
-                      max="120"
-                      value={formPomo}
-                      onChange={(e) => setFormPomo(parseInt(e.target.value) || 25)}
-                      className="w-full bg-base/50 border border-surface1/20 rounded-lg px-2 py-1.5 focus:outline-none focus:border-accent text-center text-text font-medium"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] text-subtext2 mb-1 font-medium">Short Break</label>
-                    <input
-                      type="number"
-                      min="1"
-                      max="60"
-                      value={formShort}
-                      onChange={(e) => setFormShort(parseInt(e.target.value) || 5)}
-                      className="w-full bg-base/50 border border-surface1/20 rounded-lg px-2 py-1.5 focus:outline-none focus:border-accent text-center text-text font-medium"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] text-subtext2 mb-1 font-medium">Long Break</label>
-                    <input
-                      type="number"
-                      min="1"
-                      max="60"
-                      value={formLong}
-                      onChange={(e) => setFormLong(parseInt(e.target.value) || 15)}
-                      className="w-full bg-base/50 border border-surface1/20 rounded-lg px-2 py-1.5 focus:outline-none focus:border-accent text-center text-text font-medium"
-                    />
-                  </div>
-                </div>
-              </div>
 
               {/* Theme Settings (Catppuccin Flavor) */}
               <div>

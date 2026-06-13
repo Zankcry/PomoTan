@@ -406,12 +406,7 @@ export default function App() {
     >
       {/* Header */}
       <header className="flex justify-between items-center mb-5">
-        <div className="flex items-center gap-2">
-          <img
-            src="icons/icon128.png"
-            alt="PomoFocus Logo"
-            className="w-6 h-6 rounded-full opacity-90 object-cover"
-          />
+        <div>
           <h1 className="font-medium text-sm tracking-wide text-text/90">PomoFocus</h1>
         </div>
         <button

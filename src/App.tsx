@@ -410,32 +410,32 @@ export default function App() {
 
   return (
     <div
-      className={`w-full min-h-screen ${themeFlavor} bg-base text-text flex flex-col p-4 select-none relative transition-colors duration-300`}
+      className={`w-full min-h-screen ${themeFlavor} bg-base text-text flex flex-col p-5 select-none relative transition-colors duration-300`}
       style={themeAccentStyle}
     >
       {/* Header */}
-      <header className="flex justify-between items-center mb-3">
+      <header className="flex justify-between items-center mb-5">
         <div className="flex items-center gap-2">
           <img
             src="icons/icon128.png"
             alt="PomoFocus Logo"
-            className="w-7 h-7 rounded-full shadow-sm object-cover"
+            className="w-6 h-6 rounded-full opacity-90 object-cover"
           />
-          <h1 className="font-bold text-[18px] tracking-tight text-text">PomoFocus</h1>
+          <h1 className="font-medium text-sm tracking-wide text-text/90">PomoFocus</h1>
         </div>
         <button
           onClick={openSettings}
-          className="p-1.5 rounded-full hover:bg-surface0 text-subtext0 hover:text-text transition-colors duration-200"
+          className="p-1.5 rounded-full hover:bg-surface0/50 text-subtext1 hover:text-text transition-colors duration-200"
         >
-          <SettingsIcon className="w-[18px] h-[18px]" />
+          <SettingsIcon className="w-[16px] h-[16px]" />
         </button>
       </header>
 
       {/* Dynamic Duration Customization (In One Line, Input Only) */}
-      <div className="bg-mantle rounded-2xl p-2.5 mb-4 border border-surface0 flex gap-6 text-xs font-semibold text-subtext0 items-center justify-center">
+      <div className="bg-mantle/40 rounded-xl px-4 py-2 mb-6 border border-surface0/30 flex gap-6 text-xs font-medium text-subtext1 items-center justify-center">
         <div className="flex items-center gap-2">
-          <span className="text-[11px] font-bold">Focus:</span>
-          <div className="flex items-center gap-0.5">
+          <span className="text-[10px] uppercase tracking-wider text-subtext2">Focus</span>
+          <div className="flex items-center">
             <input
               type="number"
               min="1"
@@ -451,18 +451,18 @@ export default function App() {
                   handleDurationChange('pomoTime', 1);
                 }
               }}
-              className="w-8 bg-surface0 border border-surface1 rounded text-center text-accent font-extrabold text-[11px] focus:outline-none focus:border-accent p-0.5"
+              className="w-7 bg-transparent border-b border-transparent focus:border-accent text-center text-accent font-medium text-xs focus:outline-none transition-all p-0"
               style={{ MozAppearance: 'textfield' }}
             />
-            <span className="text-[10px] font-extrabold text-accent">m</span>
+            <span className="text-[10px] text-subtext2 ml-0.5">m</span>
           </div>
         </div>
 
-        <div className="w-[1px] bg-surface1 self-stretch"></div>
+        <div className="w-[1px] bg-surface1/40 self-stretch"></div>
 
         <div className="flex items-center gap-2">
-          <span className="text-[11px] font-bold">Break:</span>
-          <div className="flex items-center gap-0.5">
+          <span className="text-[10px] uppercase tracking-wider text-subtext2">Break</span>
+          <div className="flex items-center">
             <input
               type="number"
               min="1"
@@ -478,35 +478,35 @@ export default function App() {
                   handleDurationChange('shortBreakTime', 1);
                 }
               }}
-              className="w-8 bg-surface0 border border-surface1 rounded text-center text-accent font-extrabold text-[11px] focus:outline-none focus:border-accent p-0.5"
+              className="w-7 bg-transparent border-b border-transparent focus:border-accent text-center text-accent font-medium text-xs focus:outline-none transition-all p-0"
               style={{ MozAppearance: 'textfield' }}
             />
-            <span className="text-[10px] font-extrabold text-accent">m</span>
+            <span className="text-[10px] text-subtext2 ml-0.5">m</span>
           </div>
         </div>
       </div>
 
       {/* Main Timer Display */}
-      <div className="flex flex-col items-center justify-center mb-5 flex-grow">
-        <div className="relative w-52 h-52 flex items-center justify-center">
+      <div className="flex flex-col items-center justify-center mb-6 flex-grow">
+        <div className="relative w-48 h-48 flex items-center justify-center">
           {/* Circular Progress SVG */}
           <svg className="w-full h-full transform -rotate-90">
             {/* Background Circle */}
             <circle
-              cx="104"
-              cy="104"
+              cx="96"
+              cy="96"
               r={radius}
-              className="stroke-surface1"
-              strokeWidth="6"
+              className="stroke-surface0/60"
+              strokeWidth="2.5"
               fill="transparent"
             />
             {/* Foreground Ring */}
             <circle
-              cx="104"
-              cy="104"
+              cx="96"
+              cy="96"
               r={radius}
-              className="stroke-accent transition-all duration-300 ease-out filter"
-              strokeWidth="7"
+              className="stroke-accent transition-all duration-300 ease-out"
+              strokeWidth="3.5"
               strokeDasharray={circumference}
               strokeDashoffset={strokeDashoffset}
               strokeLinecap="round"
@@ -516,29 +516,29 @@ export default function App() {
 
           {/* Large Time Text */}
           <div className="absolute flex flex-col items-center justify-center">
-            <span className="text-[38px] font-bold tracking-tight text-text tabular-nums leading-none">
+            <span className="text-[34px] font-light tracking-tight text-text/95 tabular-nums leading-none">
               {formatTime(timeLeft)}
             </span>
-            <span className="text-[10px] font-medium tracking-widest text-subtext0 uppercase mt-1">
+            <span className="text-[9px] font-medium tracking-[0.2em] text-subtext1 uppercase mt-2">
               {state.sessionType === 'pomo' ? 'Focusing' : 'Break Time'}
             </span>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-3 mt-4 w-full px-4">
+        <div className="flex items-center gap-3 mt-6 w-full px-6">
           <button
             onClick={toggleTimer}
-            className="flex-1 py-2.5 rounded-full bg-accent hover:bg-accent-hover text-base font-bold flex items-center justify-center gap-2 shadow-sm shadow-accent-glow active:scale-[0.98] transition-all duration-200"
+            className="flex-1 py-2 rounded-xl bg-accent/10 hover:bg-accent/15 text-accent font-medium text-xs flex items-center justify-center gap-1.5 active:scale-[0.98] transition-all duration-200"
           >
             {state.isRunning ? (
               <>
-                <Pause className="w-4 h-4 fill-current" />
+                <Pause className="w-3.5 h-3.5 fill-current" />
                 Pause
               </>
             ) : (
               <>
-                <Play className="w-4 h-4 fill-current" />
+                <Play className="w-3.5 h-3.5 fill-current" />
                 Start
               </>
             )}
@@ -546,7 +546,7 @@ export default function App() {
 
           <button
             onClick={skipTimer}
-            className="px-6 py-2.5 rounded-full bg-surface0 hover:bg-surface1 text-text font-semibold active:scale-[0.98] transition-all duration-200"
+            className="px-5 py-2 rounded-xl hover:bg-surface0/30 text-subtext1 hover:text-text font-medium text-xs active:scale-[0.98] transition-all duration-200"
           >
             Skip
           </button>
@@ -554,16 +554,16 @@ export default function App() {
       </div>
 
       {/* Tasks List */}
-      <div className="bg-mantle rounded-2xl p-3 flex-grow flex flex-col border border-surface0 max-h-[200px] overflow-hidden">
-        <div className="flex justify-between items-center mb-2 pb-1 border-b border-surface1">
-          <h2 className="font-bold text-sm text-text">Today's Tasks</h2>
+      <div className="bg-mantle/30 rounded-2xl p-4 flex-grow flex flex-col border border-surface0/30 max-h-[190px] overflow-hidden">
+        <div className="flex justify-between items-center mb-3 pb-1.5 border-b border-surface1/20">
+          <h2 className="font-medium text-xs text-subtext0">Today's Tasks</h2>
 
           {!isAddingTask && (
             <button
               onClick={() => setIsAddingTask(true)}
-              className="flex items-center gap-1 text-[11px] font-bold px-2 py-1 rounded-full bg-surface0 text-accent hover:bg-surface1 transition-all duration-200"
+              className="flex items-center gap-0.5 text-[10px] font-medium text-accent hover:opacity-80 transition-all duration-200"
             >
-              <Plus className="w-3 h-3" />
+              <Plus className="w-3.5 h-3.5" />
               Add task
             </button>
           )}
@@ -571,26 +571,26 @@ export default function App() {
 
         {/* Task Form inline */}
         {isAddingTask && (
-          <form onSubmit={handleAddTask} className="flex gap-2 mb-2 items-center">
+          <form onSubmit={handleAddTask} className="flex gap-2 mb-2 items-center animate-in fade-in slide-in-from-top-1 duration-200">
             <input
               type="text"
               placeholder="What are you working on?"
               value={newTaskText}
               onChange={(e) => setNewTaskText(e.target.value)}
-              className="flex-grow text-xs px-2.5 py-1.5 rounded-lg bg-base text-text placeholder-subtext1 border border-surface1 focus:outline-none focus:border-accent"
+              className="flex-grow text-xs px-2.5 py-1.5 rounded-lg bg-base/50 text-text placeholder-subtext2 border border-surface1/20 focus:outline-none focus:border-accent"
               autoFocus
             />
             <div className="flex gap-1">
               <button
                 type="submit"
-                className="p-1.5 rounded-lg bg-accent text-base hover:opacity-90"
+                className="p-1.5 rounded-lg bg-accent/20 text-accent hover:bg-accent/30"
               >
                 <Check className="w-3.5 h-3.5" />
               </button>
               <button
                 type="button"
                 onClick={() => setIsAddingTask(false)}
-                className="p-1.5 rounded-lg bg-surface1 text-text hover:bg-surface2"
+                className="p-1.5 rounded-lg bg-surface1/20 text-subtext1 hover:bg-surface2/20"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -601,34 +601,34 @@ export default function App() {
         {/* Tasks List container */}
         <div className="overflow-y-auto flex-grow text-xs space-y-1.5 pr-0.5">
           {tasks.length === 0 ? (
-            <div className="text-center text-subtext1 py-6 italic text-[11px]">
+            <div className="text-center text-subtext2 py-6 italic text-[11px]">
               No tasks added yet. Let's add one!
             </div>
           ) : (
             tasks.map((task, index) => (
               <div
                 key={task.id}
-                className="group flex items-center justify-between p-2 rounded-xl bg-base border border-surface0 hover:border-surface2 transition-all duration-200"
+                className="group flex items-center justify-between p-2 rounded-xl bg-surface0/20 border border-transparent hover:border-surface1/25 hover:bg-surface0/35 transition-all duration-200"
               >
                 <div
                   onClick={() => toggleTask(task.id)}
-                  className="flex items-center gap-2 cursor-pointer flex-grow min-w-0"
+                  className="flex items-center gap-2.5 cursor-pointer flex-grow min-w-0"
                 >
-                  <span className="text-subtext1 font-bold">{index + 1}.</span>
-                  <button className="text-accent flex-shrink-0 transition-transform duration-200 hover:scale-110">
+                  <span className="text-subtext2 font-medium">{index + 1}.</span>
+                  <button className="text-accent flex-shrink-0 transition-transform duration-200 hover:scale-105">
                     {task.completed ? (
-                      <CheckSquare className="w-4 h-4 fill-accent/10" />
+                      <CheckSquare className="w-3.5 h-3.5 fill-accent/10" />
                     ) : (
-                      <Square className="w-4 h-4" />
+                      <Square className="w-3.5 h-3.5" />
                     )}
                   </button>
-                  <span className={`truncate ${task.completed ? 'line-through text-subtext1' : 'text-text font-medium'}`}>
+                  <span className={`truncate ${task.completed ? 'line-through text-subtext2 font-light' : 'text-text font-medium'}`}>
                     {task.text}
                   </span>
                 </div>
                 <button
                   onClick={() => deleteTask(task.id)}
-                  className="opacity-0 group-hover:opacity-100 p-1 rounded-md text-red hover:bg-surface0 hover:text-red transition-all duration-200 flex-shrink-0"
+                  className="opacity-0 group-hover:opacity-100 p-1 rounded-md text-red hover:bg-red/10 hover:text-red transition-all duration-200 flex-shrink-0"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
@@ -639,7 +639,7 @@ export default function App() {
 
         {/* Completed footer */}
         {tasks.length > 0 && (
-          <div className="text-center text-[10px] font-bold text-subtext1 mt-2 pt-1.5 border-t border-surface1/60">
+          <div className="text-center text-[9px] font-medium text-subtext2 mt-2 pt-2 border-t border-surface1/10">
             Today: {tasks.filter(t => t.completed).length} of {tasks.length} Completed
           </div>
         )}
@@ -647,18 +647,18 @@ export default function App() {
 
       {/* Settings Modal */}
       {isSettingsOpen && (
-        <div className="absolute inset-0 bg-crust/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-mantle border border-surface1 rounded-2xl w-full max-h-[90%] overflow-y-auto flex flex-col p-4 shadow-xl animate-in fade-in zoom-in-95 duration-200">
+        <div className="absolute inset-0 bg-crust/40 backdrop-blur-[2px] z-50 flex items-center justify-center p-4">
+          <div className="bg-mantle border border-surface1/20 rounded-2xl w-full max-h-[90%] overflow-y-auto flex flex-col p-5 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
 
             {/* Modal Header */}
-            <div className="flex justify-between items-center mb-3 pb-2 border-b border-surface1">
-              <h3 className="font-bold text-base text-text flex items-center gap-2">
-                <SettingsIcon className="w-4 h-4 text-accent" />
+            <div className="flex justify-between items-center mb-4 pb-2 border-b border-surface1/20">
+              <h3 className="font-medium text-sm text-text flex items-center gap-2">
+                <SettingsIcon className="w-3.5 h-3.5 text-accent" />
                 Configuration
               </h3>
               <button
                 onClick={() => setIsSettingsOpen(false)}
-                className="p-1 rounded-md text-subtext0 hover:bg-surface0 hover:text-text"
+                className="p-1 rounded-md text-subtext1 hover:bg-surface0/50 hover:text-text"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -669,39 +669,39 @@ export default function App() {
 
               {/* Duration Settings */}
               <div>
-                <h4 className="font-bold text-subtext0 mb-2">Timer Durations (Minutes)</h4>
+                <h4 className="font-medium text-subtext0 mb-2">Timer Durations (Minutes)</h4>
                 <div className="grid grid-cols-3 gap-2">
                   <div>
-                    <label className="block text-[10px] text-subtext1 mb-1 font-semibold">Focus</label>
+                    <label className="block text-[10px] text-subtext2 mb-1 font-medium">Focus</label>
                     <input
                       type="number"
                       min="1"
                       max="120"
                       value={formPomo}
                       onChange={(e) => setFormPomo(parseInt(e.target.value) || 25)}
-                      className="w-full bg-base border border-surface1 rounded-lg px-2 py-1 focus:outline-none focus:border-accent text-center text-text font-bold"
+                      className="w-full bg-base/50 border border-surface1/20 rounded-lg px-2 py-1.5 focus:outline-none focus:border-accent text-center text-text font-medium"
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] text-subtext1 mb-1 font-semibold">Short Break</label>
+                    <label className="block text-[10px] text-subtext2 mb-1 font-medium">Short Break</label>
                     <input
                       type="number"
                       min="1"
                       max="60"
                       value={formShort}
                       onChange={(e) => setFormShort(parseInt(e.target.value) || 5)}
-                      className="w-full bg-base border border-surface1 rounded-lg px-2 py-1 focus:outline-none focus:border-accent text-center text-text font-bold"
+                      className="w-full bg-base/50 border border-surface1/20 rounded-lg px-2 py-1.5 focus:outline-none focus:border-accent text-center text-text font-medium"
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] text-subtext1 mb-1 font-semibold">Long Break</label>
+                    <label className="block text-[10px] text-subtext2 mb-1 font-medium">Long Break</label>
                     <input
                       type="number"
                       min="1"
                       max="60"
                       value={formLong}
                       onChange={(e) => setFormLong(parseInt(e.target.value) || 15)}
-                      className="w-full bg-base border border-surface1 rounded-lg px-2 py-1 focus:outline-none focus:border-accent text-center text-text font-bold"
+                      className="w-full bg-base/50 border border-surface1/20 rounded-lg px-2 py-1.5 focus:outline-none focus:border-accent text-center text-text font-medium"
                     />
                   </div>
                 </div>
@@ -709,17 +709,17 @@ export default function App() {
 
               {/* Theme Settings (Catppuccin Flavor) */}
               <div>
-                <h4 className="font-bold text-subtext0 mb-2">Theme Flavor</h4>
-                <div className="grid grid-cols-2 gap-1.5">
+                <h4 className="font-medium text-subtext0 mb-2">Theme Flavor</h4>
+                <div className="grid grid-cols-2 gap-2">
                   {FLAVORS.map(flavor => (
                     <button
                       key={flavor.id}
                       type="button"
                       onClick={() => setThemeFlavor(flavor.id)}
-                      className={`py-1.5 px-2 rounded-lg border text-left flex flex-col justify-center transition-all ${themeFlavor === flavor.id ? 'border-accent bg-base' : 'border-surface1 hover:bg-surface0'}`}
+                      className={`py-1.5 px-2.5 rounded-lg border text-left flex flex-col justify-center transition-all ${themeFlavor === flavor.id ? 'border-accent bg-base/50' : 'border-surface1/10 hover:bg-surface0/30'}`}
                     >
-                      <span className="font-bold text-[11px]">{flavor.name}</span>
-                      <span className="text-[9px] text-subtext1">{flavor.desc}</span>
+                      <span className="font-medium text-[11px]">{flavor.name}</span>
+                      <span className="text-[9px] text-subtext2">{flavor.desc}</span>
                     </button>
                   ))}
                 </div>
@@ -727,7 +727,7 @@ export default function App() {
 
               {/* Accent Color picker */}
               <div>
-                <h4 className="font-bold text-subtext0 mb-1.5">Accent Color</h4>
+                <h4 className="font-medium text-subtext0 mb-1.5">Accent Color</h4>
                 <div className="flex gap-2 flex-wrap">
                   {ACCENTS.map(acc => (
                     <button
@@ -736,10 +736,10 @@ export default function App() {
                       onClick={() => setThemeAccent(acc.id)}
                       title={acc.name}
                       style={{ backgroundColor: acc.color }}
-                      className={`w-6 h-6 rounded-full relative transition-all duration-200 hover:scale-110 shadow-sm border border-black/10 flex items-center justify-center`}
+                      className={`w-5.5 h-5.5 rounded-full relative transition-all duration-200 hover:scale-110 shadow-sm border border-black/5 flex items-center justify-center`}
                     >
                       {themeAccent === acc.id && (
-                        <Check className="w-3.5 h-3.5 text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)] font-bold stroke-[3]" />
+                        <Check className="w-3 h-3 text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)] font-bold stroke-[3]" />
                       )}
                     </button>
                   ))}
@@ -747,24 +747,24 @@ export default function App() {
               </div>
 
               {/* Sound and Notification Toggles */}
-              <div className="space-y-2.5 pt-2 border-t border-surface1/60">
+              <div className="space-y-2.5 pt-2 border-t border-surface1/20">
                 <label className="flex items-center justify-between cursor-pointer">
-                  <span className="font-semibold text-text">Alarm Sound (Offscreen Synth)</span>
+                  <span className="font-medium text-text">Alarm Sound (Synth)</span>
                   <input
                     type="checkbox"
                     checked={formSound}
                     onChange={(e) => setFormSound(e.target.checked)}
-                    className="w-4 h-4 rounded text-accent focus:ring-accent border-surface2 bg-base"
+                    className="w-3.5 h-3.5 rounded text-accent focus:ring-accent border-surface2/40 bg-base"
                   />
                 </label>
 
                 <label className="flex items-center justify-between cursor-pointer">
-                  <span className="font-semibold text-text">Desktop Notifications</span>
+                  <span className="font-medium text-text">Desktop Notifications</span>
                   <input
                     type="checkbox"
                     checked={formNotify}
                     onChange={(e) => setFormNotify(e.target.checked)}
-                    className="w-4 h-4 rounded text-accent focus:ring-accent border-surface2 bg-base"
+                    className="w-3.5 h-3.5 rounded text-accent focus:ring-accent border-surface2/40 bg-base"
                   />
                 </label>
               </div>
@@ -775,13 +775,13 @@ export default function App() {
             <div className="flex gap-2 mt-5">
               <button
                 onClick={saveSettings}
-                className="flex-1 py-2 rounded-xl bg-accent text-base font-bold shadow-sm active:scale-[0.98] transition-all hover:bg-accent-hover"
+                className="flex-1 py-2 rounded-xl bg-accent text-white font-medium shadow-sm active:scale-[0.98] transition-all hover:opacity-90"
               >
                 Save Changes
               </button>
               <button
                 onClick={() => setIsSettingsOpen(false)}
-                className="px-4 py-2 rounded-xl bg-surface0 hover:bg-surface1 text-text font-semibold active:scale-[0.98] transition-all"
+                className="px-4 py-2 rounded-xl bg-surface0/50 hover:bg-surface1/50 text-text font-medium active:scale-[0.98] transition-all"
               >
                 Cancel
               </button>

@@ -6,6 +6,7 @@ interface Settings {
   longBreakTime: number; // in minutes
   soundEnabled: boolean;
   notificationsEnabled: boolean;
+  autoPlay: boolean;
 }
 
 interface TimerState {
@@ -24,6 +25,7 @@ const DEFAULT_SETTINGS: Settings = {
   longBreakTime: 15,
   soundEnabled: true,
   notificationsEnabled: true,
+  autoPlay: true,
 };
 
 const DEFAULT_STATE: TimerState = {
@@ -55,16 +57,16 @@ function updateBadge(state: TimerState) {
 
   const remainingSeconds = Math.max(0, Math.round((state.endTime - Date.now()) / 1000));
   const minutes = Math.ceil(remainingSeconds / 60);
-  
+
   chrome.action.setBadgeText({ text: `${minutes}m` });
-  
+
   let badgeColor = '#40a02b'; // Green (pomo)
   if (state.sessionType === 'short_break') {
     badgeColor = '#04a5e5'; // Sky (short break)
   } else if (state.sessionType === 'long_break') {
     badgeColor = '#1e66f5'; // Blue (long break)
   }
-  
+
   chrome.action.setBadgeBackgroundColor({ color: badgeColor });
 }
 
@@ -79,7 +81,7 @@ async function playAlarmChime() {
   } catch (err) {
     // Ignore error if document already exists
   }
-  
+
   // Send message to the offscreen page
   chrome.runtime.sendMessage({ target: 'offscreen', action: 'PLAY_CHIME' });
 }
@@ -104,7 +106,7 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
   if (!data.timerState) return;
 
   const state: TimerState = data.timerState;
-  
+
   state.isRunning = false;
   state.timeLeft = 0;
   state.endTime = 0;
@@ -117,7 +119,7 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
     state.completedTodayCount += 1;
     notifyTitle = 'Focus Session Complete!';
     notifyMessage = 'Great job! Time for a short break.';
-    
+
     // Switch to short break by default
     state.sessionType = 'short_break';
     state.duration = state.settings.shortBreakTime * 60;
@@ -129,6 +131,15 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
     state.sessionType = 'pomo';
     state.duration = state.settings.pomoTime * 60;
     state.timeLeft = state.duration;
+  }
+
+  // Auto-start next session if autoplay is enabled
+  if (state.settings.autoPlay) {
+    state.isRunning = true;
+    state.endTime = Date.now() + state.timeLeft * 1000;
+
+    await chrome.alarms.create('pomodoro-alarm', { when: state.endTime });
+    await chrome.alarms.create('pomo-badge-tick', { periodInMinutes: 1 })
   }
 
   await chrome.storage.local.set({ timerState: state });
@@ -172,13 +183,13 @@ async function handleAction(message: any): Promise<any> {
       if (!state.isRunning) {
         state.isRunning = true;
         state.endTime = Date.now() + state.timeLeft * 1000;
-        
+
         // Setup timer alarm
         await chrome.alarms.create('pomodoro-alarm', { when: state.endTime });
-        
+
         // Setup badge ticking alarm (every 1 minute)
         await chrome.alarms.create('pomo-badge-tick', { periodInMinutes: 1 });
-        
+
         await chrome.storage.local.set({ timerState: state });
         updateBadge(state);
       }
@@ -188,11 +199,11 @@ async function handleAction(message: any): Promise<any> {
       if (state.isRunning) {
         await chrome.alarms.clear('pomodoro-alarm');
         await chrome.alarms.clear('pomo-badge-tick');
-        
+
         state.isRunning = false;
         state.timeLeft = Math.max(0, Math.round((state.endTime - Date.now()) / 1000));
         state.endTime = 0;
-        
+
         await chrome.storage.local.set({ timerState: state });
         updateBadge(state);
       }
@@ -201,10 +212,10 @@ async function handleAction(message: any): Promise<any> {
     case 'SKIP':
       await chrome.alarms.clear('pomodoro-alarm');
       await chrome.alarms.clear('pomo-badge-tick');
-      
+
       state.isRunning = false;
       state.endTime = 0;
-      
+
       // Determine next session
       if (state.sessionType === 'pomo') {
         state.sessionType = 'short_break';
@@ -214,7 +225,7 @@ async function handleAction(message: any): Promise<any> {
         state.duration = state.settings.pomoTime * 60;
       }
       state.timeLeft = state.duration;
-      
+
       await chrome.storage.local.set({ timerState: state });
       updateBadge(state);
       break;
@@ -222,10 +233,10 @@ async function handleAction(message: any): Promise<any> {
     case 'RESET':
       await chrome.alarms.clear('pomodoro-alarm');
       await chrome.alarms.clear('pomo-badge-tick');
-      
+
       state.isRunning = false;
       state.endTime = 0;
-      
+
       if (state.sessionType === 'pomo') {
         state.duration = state.settings.pomoTime * 60;
       } else if (state.sessionType === 'short_break') {
@@ -234,7 +245,7 @@ async function handleAction(message: any): Promise<any> {
         state.duration = state.settings.longBreakTime * 60;
       }
       state.timeLeft = state.duration;
-      
+
       await chrome.storage.local.set({ timerState: state });
       updateBadge(state);
       break;
@@ -242,7 +253,7 @@ async function handleAction(message: any): Promise<any> {
     case 'UPDATE_SETTINGS':
       const prevSettings = state.settings;
       state.settings = { ...state.settings, ...message.settings };
-      
+
       // If duration changed and timer is paused, adjust time left
       if (!state.isRunning) {
         if (state.sessionType === 'pomo' && prevSettings.pomoTime !== state.settings.pomoTime) {
@@ -256,19 +267,19 @@ async function handleAction(message: any): Promise<any> {
           state.timeLeft = state.duration;
         }
       }
-      
+
       await chrome.storage.local.set({ timerState: state });
       updateBadge(state);
       break;
-      
+
     case 'SWITCH_SESSION':
       await chrome.alarms.clear('pomodoro-alarm');
       await chrome.alarms.clear('pomo-badge-tick');
-      
+
       state.isRunning = false;
       state.endTime = 0;
       state.sessionType = message.sessionType;
-      
+
       if (state.sessionType === 'pomo') {
         state.duration = state.settings.pomoTime * 60;
       } else if (state.sessionType === 'short_break') {
@@ -277,7 +288,7 @@ async function handleAction(message: any): Promise<any> {
         state.duration = state.settings.longBreakTime * 60;
       }
       state.timeLeft = state.duration;
-      
+
       await chrome.storage.local.set({ timerState: state });
       updateBadge(state);
       break;

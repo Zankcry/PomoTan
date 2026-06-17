@@ -17,6 +17,7 @@ interface Settings {
   longBreakTime: number;
   soundEnabled: boolean;
   notificationsEnabled: boolean;
+  autoPlay: boolean;
 }
 
 interface TimerState {
@@ -41,6 +42,7 @@ const DEFAULT_SETTINGS: Settings = {
   longBreakTime: 15,
   soundEnabled: true,
   notificationsEnabled: true,
+  autoPlay: true,
 };
 
 const DEFAULT_STATE: TimerState = {
@@ -211,6 +213,7 @@ export default function App() {
   // Settings Form State
   const [formSound, setFormSound] = useState(true);
   const [formNotify, setFormNotify] = useState(true);
+  const [formAutoPlay, setFormAutoPlay] = useState(true);
 
   // Sync with Chrome Extension Storage and DOM class application
   useEffect(() => {
@@ -238,6 +241,7 @@ export default function App() {
         const s = result.timerState.settings;
         setFormSound(s.soundEnabled);
         setFormNotify(s.notificationsEnabled);
+        setFormAutoPlay(s.autoPlay ?? true);
       }
       if (result.tasks) {
         setTasks(result.tasks);
@@ -364,6 +368,7 @@ export default function App() {
       longBreakTime: state.settings.longBreakTime,
       soundEnabled: formSound,
       notificationsEnabled: formNotify,
+      autoPlay: formAutoPlay,
     };
 
     // Update Theme and Accent locally and in storage
@@ -385,6 +390,7 @@ export default function App() {
   const openSettings = () => {
     setFormSound(state.settings.soundEnabled);
     setFormNotify(state.settings.notificationsEnabled);
+    setFormAutoPlay(state.settings.autoPlay ?? true);
     setIsSettingsOpen(true);
   };
 
@@ -714,7 +720,18 @@ export default function App() {
                     className="w-3.5 h-3.5 rounded text-accent focus:ring-accent border-surface2/40 bg-base"
                   />
                 </label>
+
+                <label className="flex items-center justify-between cursor-pointer">
+                  <span className="font-medium text-text">Auto-start Next Session</span>
+                  <input
+                    type="checkbox"
+                    checked={formAutoPlay}
+                    onChange={(e) => setFormAutoPlay(e.target.checked)}
+                    className="w-3.5 h-3.5 rounded text-accent focus:ring-accent border-surface2/40 bg-base"
+                  />
+                </label>
               </div>
+
 
             </div>
 

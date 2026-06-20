@@ -87,7 +87,7 @@ async function playAlarmChime() {
   }
 
   // Send message to the offscreen page
-  chrome.runtime.sendMessage({ target: 'offscreen', action: 'PLAY_CHIME' });
+  chrome.runtime.sendMessage({ target: 'offscreen', action: 'PLAY_CHIME' }).catch(() => {});
 }
 
 async function updateBackgroundMusic(state: TimerState) {
@@ -106,12 +106,12 @@ async function updateBackgroundMusic(state: TimerState) {
       action: 'PLAY_MUSIC',
       track: state.settings.backgroundMusic,
       volume: state.settings.backgroundMusicVolume ?? 0.4
-    });
+    }).catch(() => {});
   } else {
     chrome.runtime.sendMessage({
       target: 'offscreen',
       action: 'PAUSE_MUSIC'
-    });
+    }).catch(() => {});
   }
 }
 

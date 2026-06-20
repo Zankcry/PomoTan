@@ -8,7 +8,8 @@ import {
   X,
   Check,
   Square,
-  CheckSquare
+  CheckSquare,
+  Music
 } from 'lucide-react';
 
 interface Settings {
@@ -18,6 +19,7 @@ interface Settings {
   soundEnabled: boolean;
   notificationsEnabled: boolean;
   autoPlay: boolean;
+  backgroundMusic: string;
 }
 
 interface TimerState {
@@ -43,6 +45,7 @@ const DEFAULT_SETTINGS: Settings = {
   soundEnabled: true,
   notificationsEnabled: true,
   autoPlay: true,
+  backgroundMusic: 'none',
 };
 
 const DEFAULT_STATE: TimerState = {
@@ -70,6 +73,16 @@ const ACCENTS = [
   { id: 'peach', name: 'Peach', color: '#fe640b' },
   { id: 'pink', name: 'Pink', color: '#ea76cb' },
   { id: 'red', name: 'Red', color: '#d20f39' },
+];
+
+const MUSIC_TRACKS = [
+  { id: 'none', name: 'None (Silence)' },
+  { id: 'rose water', name: 'Rose Water' },
+  { id: 'peach prosecco', name: 'Peach Prosecco' },
+  { id: 'lavender', name: 'Lavender' },
+  { id: 'honey jam', name: 'Honey Jam' },
+  { id: 'gift', name: 'Gift' },
+  { id: 'floral', name: 'Floral' },
 ];
 
 // Safe storage wrapper for development in normal browser tabs
@@ -214,6 +227,7 @@ export default function App() {
   const [formSound, setFormSound] = useState(true);
   const [formNotify, setFormNotify] = useState(true);
   const [formAutoPlay, setFormAutoPlay] = useState(true);
+  const [formMusic, setFormMusic] = useState<string>('none');
 
   // Sync with Chrome Extension Storage and DOM class application
   useEffect(() => {
@@ -369,6 +383,7 @@ export default function App() {
       soundEnabled: formSound,
       notificationsEnabled: formNotify,
       autoPlay: formAutoPlay,
+      backgroundMusic: formMusic,
     };
 
     // Update Theme and Accent locally and in storage
@@ -391,6 +406,7 @@ export default function App() {
     setFormSound(state.settings.soundEnabled);
     setFormNotify(state.settings.notificationsEnabled);
     setFormAutoPlay(state.settings.autoPlay ?? true);
+    setFormMusic(state.settings.backgroundMusic ?? 'none');
     setIsSettingsOpen(true);
   };
 
@@ -415,12 +431,36 @@ export default function App() {
         <div>
           <h1 className="font-medium text-sm tracking-wide text-text/90">PomoFocus</h1>
         </div>
-        <button
-          onClick={openSettings}
-          className="p-1.5 rounded-full hover:bg-surface0/50 text-subtext1 hover:text-text transition-colors duration-200"
-        >
-          <SettingsIcon className="w-[16px] h-[16px]" />
-        </button>
+        <div className="flex items-center gap-2">
+          {/* Quick Background Music Selector */}
+          <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-mantle/30 border border-surface0/30 hover:bg-mantle/50 transition-colors duration-200">
+            <Music className={`w-3.5 h-3.5 text-accent ${state.isRunning && state.settings.backgroundMusic !== 'none' ? 'animate-pulse' : ''}`} />
+            <select
+              value={state.settings.backgroundMusic || 'none'}
+              onChange={(e) => {
+                const track = e.target.value;
+                messaging.sendMessage({
+                  type: 'UPDATE_SETTINGS',
+                  settings: { ...state.settings, backgroundMusic: track }
+                });
+              }}
+              className="bg-transparent border-none focus:outline-none cursor-pointer text-subtext1 font-medium pr-1 text-[10px]"
+            >
+              {MUSIC_TRACKS.map(track => (
+                <option key={track.id} value={track.id} className="bg-mantle text-text text-xs">
+                  {track.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <button
+            onClick={openSettings}
+            className="p-1.5 rounded-full hover:bg-surface0/50 text-subtext1 hover:text-text transition-colors duration-200"
+          >
+            <SettingsIcon className="w-[16px] h-[16px]" />
+          </button>
+        </div>
       </header>
 
       {/* Dynamic Duration Customization (In One Line, Input Only) */}
@@ -731,6 +771,20 @@ export default function App() {
                   />
                 </label>
               </div>
+
+              <div className='flex flex-col gap-1 mb-2'>
+                <span className='font-medium text-text'>Background Music</span>
+                <select
+                  value={formMusic}
+                  onChange={(e) => setFormMusic(e.target.value)}
+                  className="w-full text-xs px-2.5 py-1.5 rounded-lg bg-base text-text border border-surface1/20 focus:outline-none focus:border-accent"
+                >
+                  {MUSIC_TRACKS.map(track => (
+                    <option key={track.id} value={track.id} className='bg-mantle'>{track.name}</option>
+                  ))}
+                </select>
+              </div>
+
 
 
             </div>

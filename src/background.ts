@@ -7,6 +7,7 @@ interface Settings {
   soundEnabled: boolean;
   notificationsEnabled: boolean;
   autoPlay: boolean;
+  backgroundMusic: string;
 }
 
 interface TimerState {
@@ -26,6 +27,7 @@ const DEFAULT_SETTINGS: Settings = {
   soundEnabled: true,
   notificationsEnabled: true,
   autoPlay: true,
+  backgroundMusic: 'none',
 };
 
 const DEFAULT_STATE: TimerState = {
@@ -86,6 +88,30 @@ async function playAlarmChime() {
   chrome.runtime.sendMessage({ target: 'offscreen', action: 'PLAY_CHIME' });
 }
 
+async function updateBackgroundMusic(state: TimerState) {
+  if (state.isRunning && state.settings.backgroundMusic && state.settings.backgroundMusic !== 'none') {
+    try {
+      await chrome.offscreen.createDocument({
+        url: 'src/offscreen/offscreen.html',
+        reasons: [chrome.offscreen.Reason.AUDIO_PLAYBACK],
+        justification: 'Play Pomodoro background music',
+      });
+    } catch (err) {
+      // ignore error if document already exists
+    }
+    chrome.runtime.sendMessage({
+      target: 'offscreen',
+      action: 'PLAY_MUSIC',
+      track: state.settings.backgroundMusic
+    });
+  } else {
+    chrome.runtime.sendMessage({
+      target: 'offscreen',
+      action: 'PAUSE_MUSIC'
+    });
+  }
+}
+
 // Show local notification
 function showNotification(title: string, message: string) {
   chrome.notifications.create('pomo-notification', {
@@ -144,6 +170,7 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
 
   await chrome.storage.local.set({ timerState: state });
   updateBadge(state);
+  await updateBackgroundMusic(state);
 
   // Trigger sound/notification based on settings
   if (state.settings.notificationsEnabled) {
@@ -192,6 +219,7 @@ async function handleAction(message: any): Promise<any> {
 
         await chrome.storage.local.set({ timerState: state });
         updateBadge(state);
+        await updateBackgroundMusic(state);
       }
       break;
 
@@ -206,6 +234,7 @@ async function handleAction(message: any): Promise<any> {
 
         await chrome.storage.local.set({ timerState: state });
         updateBadge(state);
+        await updateBackgroundMusic(state);
       }
       break;
 
@@ -228,6 +257,7 @@ async function handleAction(message: any): Promise<any> {
 
       await chrome.storage.local.set({ timerState: state });
       updateBadge(state);
+      await updateBackgroundMusic(state);
       break;
 
     case 'RESET':
@@ -248,6 +278,7 @@ async function handleAction(message: any): Promise<any> {
 
       await chrome.storage.local.set({ timerState: state });
       updateBadge(state);
+      await updateBackgroundMusic(state);
       break;
 
     case 'UPDATE_SETTINGS':
@@ -270,6 +301,7 @@ async function handleAction(message: any): Promise<any> {
 
       await chrome.storage.local.set({ timerState: state });
       updateBadge(state);
+      await updateBackgroundMusic(state);
       break;
 
     case 'SWITCH_SESSION':
@@ -291,6 +323,7 @@ async function handleAction(message: any): Promise<any> {
 
       await chrome.storage.local.set({ timerState: state });
       updateBadge(state);
+      await updateBackgroundMusic(state);
       break;
 
     case 'GET_STATE':

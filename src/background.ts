@@ -8,6 +8,7 @@ interface Settings {
   notificationsEnabled: boolean;
   autoPlay: boolean;
   backgroundMusic: string;
+  backgroundMusicVolume?: number;
 }
 
 interface TimerState {
@@ -28,6 +29,7 @@ const DEFAULT_SETTINGS: Settings = {
   notificationsEnabled: true,
   autoPlay: true,
   backgroundMusic: 'none',
+  backgroundMusicVolume: 0.4,
 };
 
 const DEFAULT_STATE: TimerState = {
@@ -102,7 +104,8 @@ async function updateBackgroundMusic(state: TimerState) {
     chrome.runtime.sendMessage({
       target: 'offscreen',
       action: 'PLAY_MUSIC',
-      track: state.settings.backgroundMusic
+      track: state.settings.backgroundMusic,
+      volume: state.settings.backgroundMusicVolume ?? 0.4
     });
   } else {
     chrome.runtime.sendMessage({

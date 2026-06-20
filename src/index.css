@@ -239,3 +239,42 @@ input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
+/* Animated Equalizer BGM Indicator */
+.eq-container {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.5px;
+  height: 12px;
+  width: 12px;
+}
+
+.eq-bar {
+  width: 2px;
+  background-color: var(--ctp-accent);
+  border-radius: 1px;
+  height: 3px;
+}
+
+@keyframes eq-bar-1 {
+  0%, 100% { height: 3px; }
+  50% { height: 11px; }
+}
+@keyframes eq-bar-2 {
+  0%, 100% { height: 5px; }
+  50% { height: 10px; }
+}
+@keyframes eq-bar-3 {
+  0%, 100% { height: 2px; }
+  50% { height: 12px; }
+}
+
+.animate-eq-1 {
+  animation: eq-bar-1 0.8s ease-in-out infinite;
+}
+.animate-eq-2 {
+  animation: eq-bar-2 0.6s ease-in-out infinite;
+}
+.animate-eq-3 {
+  animation: eq-bar-3 0.9s ease-in-out infinite;
+}

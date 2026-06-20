@@ -7,24 +7,30 @@ chrome.runtime.onMessage.addListener((message) => {
     if (message.action === 'PLAY_CHIME') {
       playChime();
     } else if (message.action === 'PLAY_MUSIC') {
-      playMusic(message.track);
+      playMusic(message.track, message.volume);
     } else if (message.action === 'PAUSE_MUSIC') {
       pauseMusic();
+    } else if (message.action === 'SET_VOLUME') {
+      setVolume(message.volume);
     }
   }
 });
 
-function playMusic(track: string) {
+function playMusic(track: string, volume?: number) {
   try {
     const audioUrl = chrome.runtime.getURL(`music/${encodeURIComponent(track)}.mp3`);
+    const targetVolume = typeof volume === 'number' ? Math.max(0, Math.min(1, volume)) : 0.4;
     
     if (!bgMusic) {
       bgMusic = new Audio(audioUrl);
       bgMusic.loop = true;
-      bgMusic.volume = 0.4; // 40% volume is ideal for background focus BGM
-    } else if (bgMusic.src !== audioUrl) {
-      bgMusic.pause();
-      bgMusic.src = audioUrl;
+      bgMusic.volume = targetVolume;
+    } else {
+      bgMusic.volume = targetVolume;
+      if (bgMusic.src !== audioUrl) {
+        bgMusic.pause();
+        bgMusic.src = audioUrl;
+      }
     }
     
     bgMusic.play().catch(err => {
@@ -38,6 +44,12 @@ function playMusic(track: string) {
 function pauseMusic() {
   if (bgMusic) {
     bgMusic.pause();
+  }
+}
+
+function setVolume(volume: number) {
+  if (bgMusic && typeof volume === 'number') {
+    bgMusic.volume = Math.max(0, Math.min(1, volume));
   }
 }
 

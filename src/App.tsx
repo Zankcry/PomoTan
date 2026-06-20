@@ -9,7 +9,10 @@ import {
   Check,
   Square,
   CheckSquare,
-  Music
+  Music,
+  ChevronDown,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
 
 interface Settings {
@@ -20,6 +23,7 @@ interface Settings {
   notificationsEnabled: boolean;
   autoPlay: boolean;
   backgroundMusic: string;
+  backgroundMusicVolume?: number;
 }
 
 interface TimerState {
@@ -46,6 +50,7 @@ const DEFAULT_SETTINGS: Settings = {
   notificationsEnabled: true,
   autoPlay: true,
   backgroundMusic: 'none',
+  backgroundMusicVolume: 0.4,
 };
 
 const DEFAULT_STATE: TimerState = {
@@ -222,12 +227,12 @@ export default function App() {
 
   // Modals
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isMusicDropdownOpen, setIsMusicDropdownOpen] = useState(false);
 
   // Settings Form State
   const [formSound, setFormSound] = useState(true);
   const [formNotify, setFormNotify] = useState(true);
   const [formAutoPlay, setFormAutoPlay] = useState(true);
-  const [formMusic, setFormMusic] = useState<string>('none');
 
   // Sync with Chrome Extension Storage and DOM class application
   useEffect(() => {
@@ -383,7 +388,8 @@ export default function App() {
       soundEnabled: formSound,
       notificationsEnabled: formNotify,
       autoPlay: formAutoPlay,
-      backgroundMusic: formMusic,
+      backgroundMusic: state.settings.backgroundMusic,
+      backgroundMusicVolume: state.settings.backgroundMusicVolume,
     };
 
     // Update Theme and Accent locally and in storage
@@ -406,7 +412,6 @@ export default function App() {
     setFormSound(state.settings.soundEnabled);
     setFormNotify(state.settings.notificationsEnabled);
     setFormAutoPlay(state.settings.autoPlay ?? true);
-    setFormMusic(state.settings.backgroundMusic ?? 'none');
     setIsSettingsOpen(true);
   };
 
@@ -432,26 +437,127 @@ export default function App() {
           <h1 className="font-medium text-sm tracking-wide text-text/90">PomoFocus</h1>
         </div>
         <div className="flex items-center gap-2">
-          {/* Quick Background Music Selector */}
-          <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-mantle/30 border border-surface0/30 hover:bg-mantle/50 transition-colors duration-200">
-            <Music className={`w-3.5 h-3.5 text-accent ${state.isRunning && state.settings.backgroundMusic !== 'none' ? 'animate-pulse' : ''}`} />
-            <select
-              value={state.settings.backgroundMusic || 'none'}
-              onChange={(e) => {
-                const track = e.target.value;
-                messaging.sendMessage({
-                  type: 'UPDATE_SETTINGS',
-                  settings: { ...state.settings, backgroundMusic: track }
-                });
-              }}
-              className="bg-transparent border-none focus:outline-none cursor-pointer text-subtext1 font-medium pr-1 text-[10px]"
+          {/* Custom BGM Selector */}
+          <div className="relative">
+            <button
+              onClick={() => setIsMusicDropdownOpen(!isMusicDropdownOpen)}
+              className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-mantle/50 border border-surface0/30 hover:bg-mantle/80 text-subtext1 hover:text-text font-medium text-[10px] transition-all duration-200 cursor-pointer active:scale-95"
             >
-              {MUSIC_TRACKS.map(track => (
-                <option key={track.id} value={track.id} className="bg-mantle text-text text-xs">
-                  {track.name}
-                </option>
-              ))}
-            </select>
+              {state.isRunning && state.settings.backgroundMusic && state.settings.backgroundMusic !== 'none' ? (
+                <div className="eq-container">
+                  <span className="eq-bar animate-eq-1" />
+                  <span className="eq-bar animate-eq-2" />
+                  <span className="eq-bar animate-eq-3" />
+                </div>
+              ) : (
+                <Music className="w-3 h-3 text-accent" />
+              )}
+              <span className="truncate max-w-[80px]">
+                {MUSIC_TRACKS.find(t => t.id === state.settings.backgroundMusic)?.name || 'Off'}
+              </span>
+              <ChevronDown className={`w-3 h-3 text-subtext2 transition-transform duration-200 ${isMusicDropdownOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {/* Click outside backdrop */}
+            {isMusicDropdownOpen && (
+              <div 
+                className="fixed inset-0 z-40 bg-transparent cursor-default" 
+                onClick={() => setIsMusicDropdownOpen(false)}
+              />
+            )}
+
+            {/* Custom Dropdown Menu */}
+            {isMusicDropdownOpen && (
+              <div className="absolute right-0 mt-1.5 w-44 rounded-xl bg-mantle border border-surface0/50 shadow-2xl p-2.5 z-50 flex flex-col gap-2.5 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
+                <div className="text-[9px] uppercase tracking-wider text-subtext2 font-bold px-1.5">
+                  Focus BGM
+                </div>
+                
+                {/* Track list */}
+                <div className="flex flex-col gap-0.5 max-h-[140px] overflow-y-auto pr-0.5">
+                  {MUSIC_TRACKS.map(track => {
+                    const isActive = (state.settings.backgroundMusic || 'none') === track.id;
+                    return (
+                      <button
+                        key={track.id}
+                        onClick={() => {
+                          messaging.sendMessage({
+                            type: 'UPDATE_SETTINGS',
+                            settings: { ...state.settings, backgroundMusic: track.id }
+                          });
+                        }}
+                        className={`flex items-center justify-between w-full px-2 py-1.5 rounded-lg text-left text-[10px] font-medium transition-all duration-150 cursor-pointer ${
+                          isActive 
+                            ? 'bg-accent/10 text-accent' 
+                            : 'hover:bg-surface0/40 text-subtext1 hover:text-text'
+                        }`}
+                      >
+                        <span className="truncate">{track.name}</span>
+                        {isActive && <Check className="w-3 h-3 stroke-[3]" />}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <div className="h-[1px] bg-surface0/50 my-0.5" />
+
+                {/* Volume slider */}
+                <div className="flex flex-col gap-1.5 px-1.5 pb-0.5">
+                  <div className="flex items-center justify-between text-[8px] uppercase tracking-wider text-subtext2 font-bold">
+                    <span>Volume</span>
+                    <span className="tabular-nums font-mono text-[9px] text-subtext1">
+                      {Math.round((state.settings.backgroundMusicVolume ?? 0.4) * 100)}%
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={() => {
+                        const currentVol = state.settings.backgroundMusicVolume ?? 0.4;
+                        const newVol = currentVol > 0 ? 0 : 0.4;
+                        messaging.sendMessage({
+                          type: 'UPDATE_SETTINGS',
+                          settings: { ...state.settings, backgroundMusicVolume: newVol }
+                        });
+                      }}
+                      className="text-subtext1 hover:text-text transition-colors duration-150"
+                    >
+                      {(state.settings.backgroundMusicVolume ?? 0.4) === 0 ? (
+                        <VolumeX className="w-3.5 h-3.5" />
+                      ) : (
+                        <Volume2 className="w-3.5 h-3.5 text-accent" />
+                      )}
+                    </button>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={Math.round((state.settings.backgroundMusicVolume ?? 0.4) * 100)}
+                      onChange={(e) => {
+                        const vol = parseFloat(e.target.value) / 100;
+                        messaging.sendMessage({
+                          type: 'UPDATE_SETTINGS',
+                          settings: { ...state.settings, backgroundMusicVolume: vol }
+                        });
+                      }}
+                      className="w-full h-1 bg-surface0 rounded-lg appearance-none cursor-pointer accent-accent focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="h-[1px] bg-surface0/50 my-0.5" />
+
+                <div className="text-center pb-0.5">
+                  <a
+                    href="https://www.youtube.com/@massobeats"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[8px] text-subtext2 hover:text-accent transition-colors duration-150 underline cursor-pointer"
+                  >
+                    Music by massobeats
+                  </a>
+                </div>
+              </div>
+            )}
           </div>
 
           <button
@@ -772,18 +878,7 @@ export default function App() {
                 </label>
               </div>
 
-              <div className='flex flex-col gap-1 mb-2'>
-                <span className='font-medium text-text'>Background Music</span>
-                <select
-                  value={formMusic}
-                  onChange={(e) => setFormMusic(e.target.value)}
-                  className="w-full text-xs px-2.5 py-1.5 rounded-lg bg-base text-text border border-surface1/20 focus:outline-none focus:border-accent"
-                >
-                  {MUSIC_TRACKS.map(track => (
-                    <option key={track.id} value={track.id} className='bg-mantle'>{track.name}</option>
-                  ))}
-                </select>
-              </div>
+
 
 
 

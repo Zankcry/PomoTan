@@ -428,11 +428,11 @@ export default function App() {
 
   return (
     <div
-      className={`w-full min-h-screen ${themeFlavor} bg-base text-text flex flex-col p-5 select-none relative transition-colors duration-300`}
+      className={`w-full h-full ${themeFlavor} bg-base text-text flex flex-col p-5 select-none relative transition-colors duration-300`}
       style={themeAccentStyle}
     >
       {/* Header */}
-      <header className="flex justify-between items-center mb-5">
+      <header className="flex justify-between items-center mb-3">
         <div>
           <h1 className="font-medium text-sm tracking-wide text-text/90">PomoFocus</h1>
         </div>
@@ -460,8 +460,8 @@ export default function App() {
 
             {/* Click outside backdrop */}
             {isMusicDropdownOpen && (
-              <div 
-                className="fixed inset-0 z-40 bg-transparent cursor-default" 
+              <div
+                className="fixed inset-0 z-40 bg-transparent cursor-default"
                 onClick={() => setIsMusicDropdownOpen(false)}
               />
             )}
@@ -472,7 +472,7 @@ export default function App() {
                 <div className="text-[9px] uppercase tracking-wider text-subtext2 font-bold px-1.5">
                   Focus BGM
                 </div>
-                
+
                 {/* Track list */}
                 <div className="flex flex-col gap-0.5 max-h-[140px] overflow-y-auto pr-0.5">
                   {MUSIC_TRACKS.map(track => {
@@ -486,11 +486,10 @@ export default function App() {
                             settings: { ...state.settings, backgroundMusic: track.id }
                           });
                         }}
-                        className={`flex items-center justify-between w-full px-2 py-1.5 rounded-lg text-left text-[10px] font-medium transition-all duration-150 cursor-pointer ${
-                          isActive 
-                            ? 'bg-accent/10 text-accent' 
-                            : 'hover:bg-surface0/40 text-subtext1 hover:text-text'
-                        }`}
+                        className={`flex items-center justify-between w-full px-2 py-1.5 rounded-lg text-left text-[10px] font-medium transition-all duration-150 cursor-pointer ${isActive
+                          ? 'bg-accent/10 text-accent'
+                          : 'hover:bg-surface0/40 text-subtext1 hover:text-text'
+                          }`}
                       >
                         <span className="truncate">{track.name}</span>
                         {isActive && <Check className="w-3 h-3 stroke-[3]" />}
@@ -570,7 +569,7 @@ export default function App() {
       </header>
 
       {/* Dynamic Duration Customization (In One Line, Input Only) */}
-      <div className="bg-mantle/40 rounded-xl px-4 py-2 mb-6 border border-surface0/30 flex gap-6 text-xs font-medium text-subtext1 items-center justify-center">
+      <div className="bg-mantle/40 rounded-xl px-4 py-2 mb-3 border border-surface0/30 flex gap-6 text-xs font-medium text-subtext1 items-center justify-center">
         <div className="flex items-center gap-2">
           <span className="text-[10px] uppercase tracking-wider text-subtext2">Focus</span>
           <div className="flex items-center">
@@ -625,7 +624,7 @@ export default function App() {
       </div>
 
       {/* Main Timer Display */}
-      <div className="flex flex-col items-center justify-center mb-6 flex-grow">
+      <div className="flex flex-col items-center justify-center mb-3 grow">
         <div className="relative w-48 h-48 flex items-center justify-center">
           {/* Circular Progress SVG */}
           <svg className="w-full h-full transform -rotate-90">
@@ -664,7 +663,7 @@ export default function App() {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-3 mt-6 w-full px-6">
+        <div className="flex items-center gap-3 mt-4 w-full px-6">
           <button
             onClick={toggleTimer}
             className="flex-1 py-2 rounded-xl bg-accent/10 hover:bg-accent/15 text-accent font-medium text-xs flex items-center justify-center gap-1.5 active:scale-[0.98] transition-all duration-200"
@@ -692,7 +691,7 @@ export default function App() {
       </div>
 
       {/* Tasks List */}
-      <div className="bg-mantle/30 rounded-2xl p-4 flex-grow flex flex-col border border-surface0/30 max-h-[190px] overflow-hidden">
+      <div className="bg-mantle/30 rounded-2xl p-4 flex flex-col border border-surface0/30 h-[190px] shrink-0 overflow-hidden">
         <div className="flex justify-between items-center mb-3 pb-1.5 border-b border-surface1/20">
           <h2 className="font-medium text-xs text-subtext0">Today's Tasks</h2>
 
@@ -737,9 +736,9 @@ export default function App() {
         )}
 
         {/* Tasks List container */}
-        <div className="overflow-y-auto flex-grow text-xs space-y-1.5 pr-0.5">
+        <div className={`overflow-y-auto grow text-xs space-y-1.5 pr-0.5 ${tasks.length === 0 ? 'flex flex-col justify-center items-center' : ''}`}>
           {tasks.length === 0 ? (
-            <div className="text-center text-subtext2 py-6 italic text-[11px]">
+            <div className="text-center text-subtext2 italic text-[11px]">
               No tasks added yet. Let's add one!
             </div>
           ) : (

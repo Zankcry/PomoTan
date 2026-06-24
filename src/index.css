@@ -201,16 +201,17 @@ body {
   font-family: 'Outfit', 'Inter', sans-serif;
   background-color: var(--ctp-base);
   color: var(--ctp-text);
-  overflow-x: hidden;
+  overflow: hidden;
   transition: background-color 0.3s ease, color 0.3s ease;
   width: 380px;
-  min-height: 580px;
+  height: 600px;
 }
 
 /* Chrome Extension Popup dimensions */
 #root {
   width: 380px;
-  min-height: 580px;
+  height: 600px;
+  overflow: hidden;
 }
 
 /* Custom Scrollbar for Tasks List */

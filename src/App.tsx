@@ -434,7 +434,7 @@ export default function App() {
       {/* Header */}
       <header className="flex justify-between items-center mb-3">
         <div>
-          <h1 className="font-medium text-sm tracking-wide text-text/90">PomoFocus</h1>
+          <h1 className="font-medium text-sm tracking-wide text-text/90">PomoTan</h1>
         </div>
         <div className="flex items-center gap-2">
           {/* Custom BGM Selector */}
@@ -714,7 +714,7 @@ export default function App() {
               placeholder="What are you working on?"
               value={newTaskText}
               onChange={(e) => setNewTaskText(e.target.value)}
-              className="flex-grow text-xs px-2.5 py-1.5 rounded-lg bg-base/50 text-text placeholder-subtext2 border border-surface1/20 focus:outline-none focus:border-accent"
+              className="grow text-xs px-2.5 py-1.5 rounded-lg bg-base/50 text-text placeholder-subtext2 border border-surface1/20 focus:outline-none focus:border-accent"
               autoFocus
             />
             <div className="flex gap-1">
@@ -749,10 +749,10 @@ export default function App() {
               >
                 <div
                   onClick={() => toggleTask(task.id)}
-                  className="flex items-center gap-2.5 cursor-pointer flex-grow min-w-0"
+                  className="flex items-center gap-2.5 cursor-pointer grow min-w-0"
                 >
                   <span className="text-subtext2 font-medium">{index + 1}.</span>
-                  <button className="text-accent flex-shrink-0 transition-transform duration-200 hover:scale-105">
+                  <button className="text-accent shrink-0 transition-transform duration-200 hover:scale-105">
                     {task.completed ? (
                       <CheckSquare className="w-3.5 h-3.5 fill-accent/10" />
                     ) : (

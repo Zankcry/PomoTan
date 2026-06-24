@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "PomoFocus",
+  "name": "PomoTan",
   "version": "1.0.0",
   "description": "A gorgeous Catppuccin-themed Pomodoro extension with persistent background timing and task tracking.",
   "permissions": [

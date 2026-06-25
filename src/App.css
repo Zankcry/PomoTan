@@ -1,184 +1,218 @@
-.counter {
-  font-size: 16px;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: var(--accent);
-  background: var(--accent-bg);
-  border: 2px solid transparent;
-  transition: border-color 0.3s;
-  margin-bottom: 24px;
+/* PomoTan Anime-Inspired UI Style Sheet */
 
-  &:hover {
-    border-color: var(--accent-border);
-  }
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
+/* Outer double border layout frame */
+.anime-theme-frame {
+  position: absolute;
+  inset: 12px;
+  border: 1px solid var(--ctp-surface2);
+  outline: 1px solid var(--ctp-surface2);
+  outline-offset: 4px;
+  border-radius: 4px;
+  background-color: color-mix(in srgb, var(--ctp-base) 65%, transparent);
+  backdrop-filter: blur(16px) saturate(140%);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transition: border-color 0.3s ease, outline-color 0.3s ease, background-color 0.3s ease;
+  z-index: 10;
+  box-sizing: border-box;
 }
 
-.hero {
-  position: relative;
-
-  .base,
-  .framework,
-  .vite {
-    inset-inline: 0;
-    margin: 0 auto;
-  }
-
-  .base {
-    width: 170px;
-    position: relative;
-    z-index: 0;
-  }
-
-  .framework,
-  .vite {
-    position: absolute;
-  }
-
-  .framework {
-    z-index: 1;
-    top: 34px;
-    height: 28px;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
-      scale(1.4);
-  }
-
-  .vite {
-    z-index: 0;
-    top: 107px;
-    height: 26px;
-    width: auto;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg)
-      scale(0.8);
-  }
+/* Corner crosses decorations */
+.corner-cross {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  pointer-events: none;
+  color: var(--ctp-surface2);
+  z-index: 20;
+  transition: color 0.3s ease;
 }
 
-#center {
+.corner-cross::before,
+.corner-cross::after {
+  content: '';
+  position: absolute;
+  background-color: currentColor;
+}
+
+/* Horizontal line */
+.corner-cross::before {
+  top: 4px;
+  left: 0;
+  width: 9px;
+  height: 1px;
+}
+
+/* Vertical line */
+.corner-cross::after {
+  top: 0;
+  left: 4px;
+  width: 1px;
+  height: 9px;
+}
+
+.corner-top-left {
+  top: -5px;
+  left: -5px;
+}
+
+.corner-top-right {
+  top: -5px;
+  right: -5px;
+}
+
+.corner-bottom-left {
+  bottom: -5px;
+  left: -5px;
+}
+
+.corner-bottom-right {
+  bottom: -5px;
+  right: -5px;
+}
+
+/* Vertical Sidebar Text Decoration */
+.vertical-banner {
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
   display: flex;
   flex-direction: column;
-  gap: 25px;
-  place-content: center;
-  place-items: center;
-  flex-grow: 1;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 11px;
+  color: var(--ctp-accent);
+  opacity: 0.65;
+  pointer-events: none;
+  z-index: 20;
+  user-select: none;
+}
 
-  @media (max-width: 1024px) {
-    padding: 32px 20px 24px;
-    gap: 18px;
+.vertical-banner-char {
+  display: inline-block;
+  margin: 2px 0;
+  transform: scale(0);
+  animation: vertical-char-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes vertical-char-in {
+  to {
+    transform: scale(1);
   }
 }
 
-#next-steps {
+/* Polaroid tilt card rules */
+.polaroid-card {
+  background: var(--ctp-mantle);
+  border: 1px solid var(--ctp-surface0);
+  border-bottom-width: 3px; /* Mimic Polaroid bottom margin look */
+  border-radius: 8px;
+  transform: rotate(var(--card-tilt, 0deg));
+  transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.25s ease, background-color 0.25s ease;
+}
+
+.polaroid-card:hover {
+  transform: scale(1.025) rotate(var(--tilt-hover, 0deg)) translateY(-1px);
+  border-color: var(--ctp-accent);
+  background: var(--ctp-surface0);
+}
+
+/* Cute hand-drawn divider */
+.dashed-divider {
+  border: none;
+  border-top: 1px dashed var(--ctp-surface1);
+  margin: 12px 0;
+  opacity: 0.5;
+}
+
+/* Bouncy Buttons (Start / Pause / Skip) */
+.btn-bouncy-primary {
+  cursor: pointer;
+  background-color: var(--ctp-accent);
+  color: var(--ctp-base);
+  font-weight: 600;
+  border-radius: 12px;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease, box-shadow 0.25s ease;
+  box-shadow: 0 4px 0px color-mix(in srgb, var(--ctp-accent) 70%, black);
+}
+
+.btn-bouncy-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0px color-mix(in srgb, var(--ctp-accent) 70%, black), 0 0 12px var(--shadow-accent-glow);
+}
+
+.btn-bouncy-primary:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0px color-mix(in srgb, var(--ctp-accent) 70%, black);
+}
+
+.btn-bouncy-secondary {
+  cursor: pointer;
+  background-color: var(--ctp-surface0);
+  color: var(--ctp-text);
+  font-weight: 600;
+  border-radius: 12px;
+  border: 1px solid var(--ctp-surface1);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease;
+}
+
+.btn-bouncy-secondary:hover {
+  transform: translateY(-2px);
+  background-color: var(--ctp-surface1);
+}
+
+.btn-bouncy-secondary:active {
+  transform: translateY(1px);
+}
+
+/* Inline card tasks layout spacing */
+.task-item-container {
   display: flex;
-  border-top: 1px solid var(--border);
-  text-align: left;
-
-  & > div {
-    flex: 1 1 0;
-    padding: 32px;
-    @media (max-width: 1024px) {
-      padding: 24px 20px;
-    }
-  }
-
-  .icon {
-    margin-bottom: 16px;
-    width: 22px;
-    height: 22px;
-  }
-
-  @media (max-width: 1024px) {
-    flex-direction: column;
-    text-align: center;
-  }
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--ctp-base);
+  border: 1px solid var(--ctp-surface0);
+  transition: border-color 0.2s ease, transform 0.2s ease;
 }
 
-#docs {
-  border-right: 1px solid var(--border);
-
-  @media (max-width: 1024px) {
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
+.task-item-container:hover {
+  border-color: var(--ctp-accent);
+  transform: translateX(2px);
 }
 
-#next-steps ul {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  gap: 8px;
-  margin: 32px 0 0;
-
-  .logo {
-    height: 18px;
-  }
-
-  a {
-    color: var(--text-h);
-    font-size: 16px;
-    border-radius: 6px;
-    background: var(--social-bg);
-    display: flex;
-    padding: 6px 12px;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-    transition: box-shadow 0.3s;
-
-    &:hover {
-      box-shadow: var(--shadow);
-    }
-    .button-icon {
-      height: 18px;
-      width: 18px;
-    }
-  }
-
-  @media (max-width: 1024px) {
-    margin-top: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-
-    li {
-      flex: 1 1 calc(50% - 8px);
-    }
-
-    a {
-      width: 100%;
-      justify-content: center;
-      box-sizing: border-box;
-    }
-  }
+/* Micro dots decorative next to lists */
+.list-decoration-dots {
+  display: inline-flex;
+  gap: 3px;
+  margin-right: 6px;
 }
 
-#spacer {
-  height: 88px;
-  border-top: 1px solid var(--border);
-  @media (max-width: 1024px) {
-    height: 48px;
-  }
+.list-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: var(--ctp-accent);
+  opacity: 0.7;
 }
 
-.ticks {
-  position: relative;
-  width: 100%;
+/* Staggered transition delays helper */
+.stagger-0 { animation-delay: 0ms; }
+.stagger-1 { animation-delay: 50ms; }
+.stagger-2 { animation-delay: 100ms; }
+.stagger-3 { animation-delay: 150ms; }
+.stagger-4 { animation-delay: 200ms; }
+.stagger-5 { animation-delay: 250ms; }
 
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    top: -4.5px;
-    border: 5px solid transparent;
-  }
-
-  &::before {
-    left: 0;
-    border-left-color: var(--border);
-  }
-  &::after {
-    right: 0;
-    border-right-color: var(--border);
-  }
+/* Fluid BGM list hover transition */
+.btn-fluid-hover {
+  transition: padding-left 0.35s cubic-bezier(0.25, 1, 0.2, 1), 
+              background-color 0.3s cubic-bezier(0.25, 1, 0.2, 1), 
+              color 0.3s cubic-bezier(0.25, 1, 0.2, 1),
+              border-color 0.3s cubic-bezier(0.25, 1, 0.2, 1);
 }
+

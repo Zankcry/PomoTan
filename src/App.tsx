@@ -820,123 +820,123 @@ export default function App() {
             </div>
           )}
         </div>
+      </div>
 
-        {/* Settings Modal */}
-        {isSettingsOpen && (
-          <div className="absolute inset-0 bg-crust/50 backdrop-blur-[3px] z-50 flex items-center justify-center p-4 curtain-reveal-overlay">
-            <div className="bg-mantle border border-surface1/30 rounded-2xl w-full max-h-[90%] overflow-y-auto flex flex-col p-4 shadow-2xl origin-center animate-spring-in">
+      {/* Settings Modal */}
+      {isSettingsOpen && (
+        <div className="absolute inset-0 bg-crust/50 backdrop-blur-[3px] z-50 flex items-center justify-center p-4 curtain-reveal-overlay">
+          <div className="bg-mantle border border-surface1/30 rounded-2xl w-full max-h-[90%] overflow-y-auto flex flex-col p-4 shadow-2xl origin-center animate-spring-in">
 
-              {/* Modal Header */}
-              <div className="flex justify-between items-center mb-3 pb-2 border-b border-surface1/20">
-                <h3 className="font-semibold text-xs tracking-wider text-text flex items-center gap-1.5 uppercase">
-                  <SettingsIcon className="w-3.5 h-3.5 text-accent hover:rotate-90 transition-transform duration-300" />
-                  Configuration
-                </h3>
-                <button
-                  onClick={() => setIsSettingsOpen(false)}
-                  className="p-1 rounded-md text-subtext1 hover:bg-surface0/60 hover:text-text btn-squash"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
+            {/* Modal Header */}
+            <div className="flex justify-between items-center mb-3 pb-2 border-b border-surface1/20">
+              <h3 className="font-semibold text-xs tracking-wider text-text flex items-center gap-1.5 uppercase">
+                <SettingsIcon className="w-3.5 h-3.5 text-accent hover:rotate-90 transition-transform duration-300" />
+                Configuration
+              </h3>
+              <button
+                onClick={() => setIsSettingsOpen(false)}
+                className="p-1 rounded-md text-subtext1 hover:bg-surface0/60 hover:text-text btn-squash"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="space-y-4 text-[11px]">
+
+              {/* Theme Settings (Catppuccin Flavor) */}
+              <div>
+                <h4 className="font-bold text-[10px] text-accent uppercase tracking-wider mb-2">Theme Flavor</h4>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {FLAVORS.map(flavor => (
+                    <button
+                      key={flavor.id}
+                      type="button"
+                      onClick={() => setThemeFlavor(flavor.id)}
+                      className={`py-1 px-2 rounded-lg border text-left flex flex-col justify-center transition-all btn-squash ${themeFlavor === flavor.id ? 'border-accent bg-base/60' : 'border-surface1/10 hover:bg-surface0/40'}`}
+                    >
+                      <span className="font-bold text-[10px]">{flavor.name}</span>
+                      <span className="text-[8px] text-subtext2">{flavor.desc}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
 
-              {/* Modal Body */}
-              <div className="space-y-4 text-[11px]">
-
-                {/* Theme Settings (Catppuccin Flavor) */}
-                <div>
-                  <h4 className="font-bold text-[10px] text-accent uppercase tracking-wider mb-2">Theme Flavor</h4>
-                  <div className="grid grid-cols-2 gap-1.5">
-                    {FLAVORS.map(flavor => (
-                      <button
-                        key={flavor.id}
-                        type="button"
-                        onClick={() => setThemeFlavor(flavor.id)}
-                        className={`py-1 px-2 rounded-lg border text-left flex flex-col justify-center transition-all btn-squash ${themeFlavor === flavor.id ? 'border-accent bg-base/60' : 'border-surface1/10 hover:bg-surface0/40'}`}
-                      >
-                        <span className="font-bold text-[10px]">{flavor.name}</span>
-                        <span className="text-[8px] text-subtext2">{flavor.desc}</span>
-                      </button>
-                    ))}
-                  </div>
+              {/* Accent Color picker */}
+              <div>
+                <h4 className="font-bold text-[10px] text-accent uppercase tracking-wider mb-1.5">Accent Color</h4>
+                <div className="flex gap-2 flex-wrap">
+                  {ACCENTS.map(acc => (
+                    <button
+                      key={acc.id}
+                      type="button"
+                      onClick={() => setThemeAccent(acc.id)}
+                      title={acc.name}
+                      style={{ backgroundColor: acc.color }}
+                      className={`w-5 h-5 rounded-full relative transition-all duration-200 hover:scale-110 shadow-sm border border-black/5 flex items-center justify-center`}
+                    >
+                      {themeAccent === acc.id && (
+                        <Check className="w-3 h-3 text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)] font-bold stroke-[3]" />
+                      )}
+                    </button>
+                  ))}
                 </div>
-
-                {/* Accent Color picker */}
-                <div>
-                  <h4 className="font-bold text-[10px] text-accent uppercase tracking-wider mb-1.5">Accent Color</h4>
-                  <div className="flex gap-2 flex-wrap">
-                    {ACCENTS.map(acc => (
-                      <button
-                        key={acc.id}
-                        type="button"
-                        onClick={() => setThemeAccent(acc.id)}
-                        title={acc.name}
-                        style={{ backgroundColor: acc.color }}
-                        className={`w-5 h-5 rounded-full relative transition-all duration-200 hover:scale-110 shadow-sm border border-black/5 flex items-center justify-center`}
-                      >
-                        {themeAccent === acc.id && (
-                          <Check className="w-3 h-3 text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)] font-bold stroke-[3]" />
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Sound and Notification Toggles */}
-                <div className="space-y-2 pt-2 border-t border-surface1/20">
-                  <label className="flex items-center justify-between cursor-pointer btn-squash py-0.5">
-                    <span className="font-medium text-text">Alarm Sound (Synth)</span>
-                    <input
-                      type="checkbox"
-                      checked={formSound}
-                      onChange={(e) => setFormSound(e.target.checked)}
-                      className="w-3.5 h-3.5 rounded text-accent focus:ring-accent border-surface2/40 bg-base cursor-pointer"
-                    />
-                  </label>
-
-                  <label className="flex items-center justify-between cursor-pointer btn-squash py-0.5">
-                    <span className="font-medium text-text">Desktop Notifications</span>
-                    <input
-                      type="checkbox"
-                      checked={formNotify}
-                      onChange={(e) => setFormNotify(e.target.checked)}
-                      className="w-3.5 h-3.5 rounded text-accent focus:ring-accent border-surface2/40 bg-base cursor-pointer"
-                    />
-                  </label>
-
-                  <label className="flex items-center justify-between cursor-pointer btn-squash py-0.5">
-                    <span className="font-medium text-text">Auto-start Next Session</span>
-                    <input
-                      type="checkbox"
-                      checked={formAutoPlay}
-                      onChange={(e) => setFormAutoPlay(e.target.checked)}
-                      className="w-3.5 h-3.5 rounded text-accent focus:ring-accent border-surface2/40 bg-base cursor-pointer"
-                    />
-                  </label>
-                </div>
-
               </div>
 
-              {/* Modal Actions */}
-              <div className="flex gap-2 mt-4">
-                <button
-                  onClick={saveSettings}
-                  className="flex-1 py-1.5 btn-bouncy-primary text-xs"
-                >
-                  Save Changes
-                </button>
-                <button
-                  onClick={() => setIsSettingsOpen(false)}
-                  className="px-4 py-1.5 btn-bouncy-secondary text-xs"
-                >
-                  Cancel
-                </button>
+              {/* Sound and Notification Toggles */}
+              <div className="space-y-2 pt-2 border-t border-surface1/20">
+                <label className="flex items-center justify-between cursor-pointer btn-squash py-0.5">
+                  <span className="font-medium text-text">Alarm Sound (Synth)</span>
+                  <input
+                    type="checkbox"
+                    checked={formSound}
+                    onChange={(e) => setFormSound(e.target.checked)}
+                    className="w-3.5 h-3.5 rounded text-accent focus:ring-accent border-surface2/40 bg-base cursor-pointer"
+                  />
+                </label>
+
+                <label className="flex items-center justify-between cursor-pointer btn-squash py-0.5">
+                  <span className="font-medium text-text">Desktop Notifications</span>
+                  <input
+                    type="checkbox"
+                    checked={formNotify}
+                    onChange={(e) => setFormNotify(e.target.checked)}
+                    className="w-3.5 h-3.5 rounded text-accent focus:ring-accent border-surface2/40 bg-base cursor-pointer"
+                  />
+                </label>
+
+                <label className="flex items-center justify-between cursor-pointer btn-squash py-0.5">
+                  <span className="font-medium text-text">Auto-start Next Session</span>
+                  <input
+                    type="checkbox"
+                    checked={formAutoPlay}
+                    onChange={(e) => setFormAutoPlay(e.target.checked)}
+                    className="w-3.5 h-3.5 rounded text-accent focus:ring-accent border-surface2/40 bg-base cursor-pointer"
+                  />
+                </label>
               </div>
 
             </div>
+
+            {/* Modal Actions */}
+            <div className="flex gap-2 mt-4">
+              <button
+                onClick={saveSettings}
+                className="flex-1 py-1.5 btn-bouncy-primary text-xs"
+              >
+                Save Changes
+              </button>
+              <button
+                onClick={() => setIsSettingsOpen(false)}
+                className="px-4 py-1.5 btn-bouncy-secondary text-xs"
+              >
+                Cancel
+              </button>
+            </div>
+
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

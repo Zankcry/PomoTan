@@ -4,13 +4,9 @@
 .anime-theme-frame {
   position: absolute;
   inset: 12px;
-  border: 1px solid var(--ctp-surface2);
-  outline: 1px solid var(--ctp-surface2);
-  outline-offset: 4px;
   border-radius: 4px;
-  background-color: color-mix(in srgb, var(--ctp-base) 65%, transparent);
-  backdrop-filter: blur(16px) saturate(140%);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  background-color: transparent;
+  box-shadow: none;
   transition: border-color 0.3s ease, outline-color 0.3s ease, background-color 0.3s ease;
   z-index: 10;
   box-sizing: border-box;
@@ -18,6 +14,7 @@
 
 /* Corner crosses decorations */
 .corner-cross {
+  display: none;
   position: absolute;
   width: 9px;
   height: 9px;

@@ -435,14 +435,7 @@ export default function App() {
       {/* Background Grid Pattern */}
       <div className="bg-grid-overlay" />
 
-      {/* Floating Background Particles */}
-      <div className="particle-layer">
-        <span className="particle" style={{ left: '8%', width: '5px', height: '5px', animationDelay: '0s', animationDuration: '6.5s' }} />
-        <span className="particle" style={{ left: '28%', width: '7px', height: '7px', animationDelay: '1.2s', animationDuration: '5.8s' }} />
-        <span className="particle" style={{ left: '52%', width: '4px', height: '4px', animationDelay: '2.8s', animationDuration: '7.2s' }} />
-        <span className="particle" style={{ left: '74%', width: '8px', height: '8px', animationDelay: '0.6s', animationDuration: '5.0s' }} />
-        <span className="particle" style={{ left: '88%', width: '6px', height: '6px', animationDelay: '1.8s', animationDuration: '6.8s' }} />
-      </div>
+
 
       {/* Main Double Border Container Frame */}
       <div className="anime-theme-frame flex flex-col p-3.5 relative z-10 overflow-hidden">

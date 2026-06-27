@@ -213,3 +213,94 @@
               border-color 0.3s cubic-bezier(0.25, 1, 0.2, 1);
 }
 
+/* Premium Custom Checkmark Styles */
+.todo-check {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--ctp-surface2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  flex-shrink: 0;
+  transition: border-color 0.25s ease, background-color 0.25s ease;
+}
+
+/* Hover effect on unchecked checkbox */
+.task-item-container:hover .todo-check:not(.checked) {
+  border-color: var(--ctp-overlay1);
+}
+
+/* Inner Green Circle scale-up */
+.todo-check-bg {
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  background-color: var(--ctp-accent);
+  transform: scale(0);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 1;
+  box-shadow: 0 2px 8px var(--ctp-accent-glow);
+}
+
+/* Small Checkmark Icon */
+.todo-check-icon {
+  width: 10px;
+  height: 10px;
+  stroke: var(--ctp-base); /* match base color for contrast, since the circle is accent color background */
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  z-index: 2;
+  stroke-dasharray: 20;
+  stroke-dashoffset: 20;
+  transition: stroke-dashoffset 0.2s ease 0.05s;
+}
+
+/* Checked States styling */
+.todo-check.checked {
+  border-color: transparent;
+  animation: check-pop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.todo-check.checked .todo-check-bg {
+  transform: scale(1);
+}
+
+.todo-check.checked .todo-check-icon {
+  stroke-dashoffset: 0;
+}
+
+@keyframes check-pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+/* Strike-through Line */
+.todo-text {
+  position: relative;
+  transition: color 0.25s ease;
+}
+
+.todo-text::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1.5px;
+  background-color: var(--ctp-subtext1);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0.7;
+}
+
+.todo-text.checked::after {
+  transform: scaleX(1);
+}
+
+

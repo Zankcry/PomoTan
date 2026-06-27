@@ -7,8 +7,6 @@ import {
   Trash2,
   X,
   Check,
-  Square,
-  CheckSquare,
   Music,
   ChevronDown,
   Volume2,
@@ -432,11 +430,6 @@ export default function App() {
       className={`w-full h-full ${themeFlavor} bg-base text-text flex flex-col p-2 select-none relative transition-colors duration-300 overflow-hidden`}
       style={themeAccentStyle}
     >
-      {/* Background Grid Pattern */}
-      <div className="bg-grid-overlay" />
-
-
-
       {/* Main Double Border Container Frame */}
       <div className="anime-theme-frame flex flex-col p-3.5 relative z-10 overflow-hidden">
         {/* Corner Anchors */}
@@ -789,15 +782,13 @@ export default function App() {
                       onClick={() => toggleTask(task.id)}
                       className="flex items-center gap-2 cursor-pointer grow min-w-0"
                     >
-                      <span className="text-subtext2 font-bold">{index + 1}.</span>
-                      <button className="text-accent shrink-0 transition-transform duration-200 hover:scale-110">
-                        {task.completed ? (
-                          <CheckSquare className="w-3.5 h-3.5 fill-accent/10" />
-                        ) : (
-                          <Square className="w-3.5 h-3.5" />
-                        )}
-                      </button>
-                      <span className={`truncate ${task.completed ? 'line-through text-subtext2 font-light' : 'text-text font-medium'}`}>
+                      <div className={`todo-check ${task.completed ? 'checked' : ''}`}>
+                        <div className="todo-check-bg"></div>
+                        <svg className="todo-check-icon" viewBox="0 0 10 10">
+                          <path d="M2 5 L4 7 L8 3" />
+                        </svg>
+                      </div>
+                      <span className={`truncate todo-text ${task.completed ? 'checked text-subtext2 font-light' : 'text-text font-medium'}`}>
                         {task.text}
                       </span>
                     </div>

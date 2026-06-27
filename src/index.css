@@ -283,19 +283,6 @@ input[type=number]::-webkit-outer-spin-button {
 /* --- YUI540/ANIME DESIGN SYSTEM ANIMATIONS --- */
 
 /* Floating backgrounds */
-.bg-grid-overlay {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image: 
-    radial-gradient(var(--ctp-surface1) 1.2px, transparent 1.2px),
-    radial-gradient(var(--ctp-surface1) 1.2px, var(--ctp-base) 1.2px);
-  background-size: 24px 24px;
-  background-position: 0 0, 12px 12px;
-  opacity: 0.12;
-  z-index: 0;
-  transition: opacity 0.5s ease;
-}
 
 /* Floating particles */
 .particle-layer {

@@ -847,8 +847,12 @@ export default function App() {
                 return (
                   <div
                     key={task.id}
-                    style={{ '--card-tilt': `${tiltAngle}deg`, '--tilt-hover': `${tiltHover}deg` } as React.CSSProperties}
-                    className="group task-item-container polaroid-card animate-spring-in"
+                    style={{
+                      '--card-tilt': `${tiltAngle}deg`,
+                      '--tilt-hover': `${tiltHover}deg`,
+                      '--delay': `${Math.min(index, 4) * 0.05}s`
+                    } as React.CSSProperties}
+                    className="group task-item-container polaroid-card task-item-entrance"
                   >
                     <div
                       onClick={() => toggleTask(task.id)}

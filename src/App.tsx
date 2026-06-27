@@ -215,6 +215,16 @@ export default function App() {
   // Timer State
   const [state, setState] = useState<TimerState>(DEFAULT_STATE);
   const [timeLeft, setTimeLeft] = useState<number>(DEFAULT_STATE.timeLeft);
+  const [squashTrigger, setSquashTrigger] = useState(0);
+  const [burstActive, setBurstActive] = useState(false);
+
+  const triggerBurst = () => {
+    setBurstActive(false);
+    setSquashTrigger(prev => prev + 1);
+    setTimeout(() => {
+      setBurstActive(true);
+    }, 10);
+  };
 
   // Tasks State
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -311,6 +321,7 @@ export default function App() {
       if (diff === 0) {
         // Stop checking, service worker will trigger completion updates
         setState(prev => ({ ...prev, isRunning: false, timeLeft: 0 }));
+        triggerBurst();
       }
     };
 
@@ -322,11 +333,13 @@ export default function App() {
   // Handle Play/Pause
   const toggleTimer = () => {
     const type = state.isRunning ? 'PAUSE' : 'START';
+    triggerBurst();
     messaging.sendMessage({ type });
   };
 
   // Handle Skip
   const skipTimer = () => {
+    triggerBurst();
     messaging.sendMessage({ type: 'SKIP' });
   };
 
@@ -430,13 +443,20 @@ export default function App() {
       className={`w-full h-full ${themeFlavor} bg-base text-text flex flex-col p-2 select-none relative transition-colors duration-300 overflow-hidden`}
       style={themeAccentStyle}
     >
+      {/* Background Weaving Grid */}
+      <div className="weaving-grid">
+        <div className="grid-line-h" style={{ top: '20%', '--delay': '0.1s' } as React.CSSProperties} />
+        <div className="grid-line-h" style={{ top: '40%', '--delay': '0.3s' } as React.CSSProperties} />
+        <div className="grid-line-h" style={{ top: '60%', '--delay': '0.2s' } as React.CSSProperties} />
+        <div className="grid-line-h" style={{ top: '80%', '--delay': '0.4s' } as React.CSSProperties} />
+        <div className="grid-line-v" style={{ left: '20%', '--delay': '0.15s' } as React.CSSProperties} />
+        <div className="grid-line-v" style={{ left: '40%', '--delay': '0.35s' } as React.CSSProperties} />
+        <div className="grid-line-v" style={{ left: '60%', '--delay': '0.25s' } as React.CSSProperties} />
+        <div className="grid-line-v" style={{ left: '80%', '--delay': '0.45s' } as React.CSSProperties} />
+      </div>
+
       {/* Main Double Border Container Frame */}
       <div className="anime-theme-frame flex flex-col p-3.5 relative z-10 overflow-hidden">
-        {/* Corner Anchors */}
-        <div className="corner-cross corner-top-left" />
-        <div className="corner-cross corner-top-right" />
-        <div className="corner-cross corner-bottom-left" />
-        <div className="corner-cross corner-bottom-right" />
 
         {/* Header */}
         <header className="flex justify-between items-center mb-2.5 relative z-20">
@@ -485,7 +505,7 @@ export default function App() {
 
               {/* Custom Dropdown Menu */}
               {isMusicDropdownOpen && (
-                <div className="absolute right-0 mt-1.5 w-44 rounded-xl bg-mantle border border-surface0/60 shadow-2xl p-2.5 z-50 flex flex-col gap-2.5 animate-spring-in origin-top-right">
+                <div className="absolute right-0 mt-1.5 w-44 rounded-xl bg-mantle border border-surface0/60 shadow-2xl p-2.5 z-50 flex flex-col gap-2.5 bgm-dropdown-slide-in origin-top-right">
                   <div className="text-[9px] uppercase tracking-wider text-accent font-bold px-1.5 flex items-center">
                     <span className="list-decoration-dots">
                       <span className="list-dot" />
@@ -496,7 +516,7 @@ export default function App() {
 
                   {/* Track list */}
                   <div className="flex flex-col gap-1 max-h-[135px] overflow-y-auto overflow-x-hidden pr-1.5">
-                    {MUSIC_TRACKS.map(track => {
+                    {MUSIC_TRACKS.map((track, i) => {
                       const isActive = (state.settings.backgroundMusic || 'none') === track.id;
                       return (
                         <button
@@ -507,7 +527,8 @@ export default function App() {
                               settings: { ...state.settings, backgroundMusic: track.id }
                             });
                           }}
-                          className={`flex items-center justify-between w-full px-2.5 py-1.5 rounded-lg text-left text-[10px] font-medium btn-fluid-hover cursor-pointer ${isActive
+                          style={{ '--delay': `${i * 0.04}s` } as React.CSSProperties}
+                          className={`flex items-center justify-between w-full px-2.5 py-1.5 rounded-lg text-left text-[10px] font-medium btn-fluid-hover cursor-pointer domino-cascade-in ${isActive
                             ? 'bg-accent/15 text-accent border border-accent/25'
                             : 'hover:bg-accent/10 hover:text-accent hover:pl-3.5 text-subtext1'
                             }`}
@@ -590,97 +611,148 @@ export default function App() {
         </header>
 
         {/* Dynamic Duration Customization */}
-        <div className="bg-mantle/40 rounded-xl px-4 py-1.5 mb-2.5 border border-surface0/50 flex gap-6 text-xs font-medium text-subtext1 items-center justify-center">
+        <div className="bg-mantle/40 rounded-xl px-4 py-1.5 mb-2.5 border border-surface0/50 flex gap-4 text-xs font-medium text-subtext1 items-center justify-center">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] uppercase tracking-wider text-text font-bold">Focus</span>
-            <div className="flex items-center">
-              <input
-                type="number"
-                min="1"
-                max="999"
-                value={state.settings.pomoTime === 0 ? '' : state.settings.pomoTime}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  if (val.length > 3) return;
-                  handleDurationChange('pomoTime', val === '' ? 0 : parseInt(val) || 0);
-                }}
-                onBlur={() => {
-                  if (state.settings.pomoTime < 1) {
-                    handleDurationChange('pomoTime', 1);
-                  }
-                }}
-                className="w-7 bg-transparent border-b border-transparent focus:border-accent text-center text-accent font-bold text-xs focus:outline-none transition-all p-0"
-                style={{ MozAppearance: 'textfield' }}
-              />
-              <span className="text-[9px] text-subtext2 ml-0.5">m</span>
+            <span className="text-[9px] uppercase tracking-wider text-text font-bold">Focus</span>
+            <div className="flex items-center gap-1 bg-base/50 rounded-full px-2 py-0.5 border border-surface0/60 shadow-inner">
+              <button
+                type="button"
+                onClick={() => handleDurationChange('pomoTime', Math.max(1, state.settings.pomoTime - 1))}
+                className="w-4 h-4 rounded-full flex items-center justify-center text-subtext2 hover:text-accent hover:bg-surface0/60 active:scale-75 transition-all duration-150 font-bold text-[10px] cursor-pointer"
+              >
+                -
+              </button>
+              <div key={state.settings.pomoTime} className="number-bounce flex items-center">
+                <input
+                  type="number"
+                  min="1"
+                  max="999"
+                  value={state.settings.pomoTime === 0 ? '' : state.settings.pomoTime}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val.length > 3) return;
+                    handleDurationChange('pomoTime', val === '' ? 0 : parseInt(val) || 0);
+                  }}
+                  onBlur={() => {
+                    if (state.settings.pomoTime < 1) {
+                      handleDurationChange('pomoTime', 1);
+                    }
+                  }}
+                  className="w-7 bg-transparent border-none text-center text-accent font-bold text-xs focus:outline-none p-0"
+                  style={{ MozAppearance: 'textfield' }}
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => handleDurationChange('pomoTime', Math.min(999, state.settings.pomoTime + 1))}
+                className="w-4 h-4 rounded-full flex items-center justify-center text-subtext2 hover:text-accent hover:bg-surface0/60 active:scale-75 transition-all duration-150 font-bold text-[10px] cursor-pointer"
+              >
+                +
+              </button>
+              <span className="text-[8px] text-subtext2 mr-0.5">m</span>
             </div>
           </div>
 
           <div className="w-[1px] bg-surface1/30 self-stretch"></div>
 
           <div className="flex items-center gap-2">
-            <span className="text-[10px] uppercase tracking-wider text-text font-bold">Break</span>
-            <div className="flex items-center">
-              <input
-                type="number"
-                min="1"
-                max="999"
-                value={state.settings.shortBreakTime === 0 ? '' : state.settings.shortBreakTime}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  if (val.length > 3) return;
-                  handleDurationChange('shortBreakTime', val === '' ? 0 : parseInt(val) || 0);
-                }}
-                onBlur={() => {
-                  if (state.settings.shortBreakTime < 1) {
-                    handleDurationChange('shortBreakTime', 1);
-                  }
-                }}
-                className="w-7 bg-transparent border-b border-transparent focus:border-accent text-center text-accent font-bold text-xs focus:outline-none transition-all p-0"
-                style={{ MozAppearance: 'textfield' }}
-              />
-              <span className="text-[9px] text-subtext2 ml-0.5">m</span>
+            <span className="text-[9px] uppercase tracking-wider text-text font-bold">Break</span>
+            <div className="flex items-center gap-1 bg-base/50 rounded-full px-2 py-0.5 border border-surface0/60 shadow-inner">
+              <button
+                type="button"
+                onClick={() => handleDurationChange('shortBreakTime', Math.max(1, state.settings.shortBreakTime - 1))}
+                className="w-4 h-4 rounded-full flex items-center justify-center text-subtext2 hover:text-accent hover:bg-surface0/60 active:scale-75 transition-all duration-150 font-bold text-[10px] cursor-pointer"
+              >
+                -
+              </button>
+              <div key={state.settings.shortBreakTime} className="number-bounce flex items-center">
+                <input
+                  type="number"
+                  min="1"
+                  max="999"
+                  value={state.settings.shortBreakTime === 0 ? '' : state.settings.shortBreakTime}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val.length > 3) return;
+                    handleDurationChange('shortBreakTime', val === '' ? 0 : parseInt(val) || 0);
+                  }}
+                  onBlur={() => {
+                    if (state.settings.shortBreakTime < 1) {
+                      handleDurationChange('shortBreakTime', 1);
+                    }
+                  }}
+                  className="w-7 bg-transparent border-none text-center text-accent font-bold text-xs focus:outline-none p-0"
+                  style={{ MozAppearance: 'textfield' }}
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => handleDurationChange('shortBreakTime', Math.min(999, state.settings.shortBreakTime + 1))}
+                className="w-4 h-4 rounded-full flex items-center justify-center text-subtext2 hover:text-accent hover:bg-surface0/60 active:scale-75 transition-all duration-150 font-bold text-[10px] cursor-pointer"
+              >
+                +
+              </button>
+              <span className="text-[8px] text-subtext2 mr-0.5">m</span>
             </div>
           </div>
         </div>
 
         {/* Main Timer Display */}
         <div className="flex flex-col items-center justify-center mb-2.5 grow">
-          <div className={`relative w-44 h-44 flex items-center justify-center ${state.isRunning ? 'animate-breathe animate-rock' : ''}`}>
-            {/* Circular Progress SVG */}
-            <svg className="w-full h-full transform -rotate-90">
-              {/* Background Circle */}
-              <circle
-                cx="88"
-                cy="88"
-                r={radius}
-                className="stroke-surface0/60"
-                strokeWidth="2.5"
-                fill="transparent"
-              />
-              {/* Foreground Ring */}
-              <circle
-                cx="88"
-                cy="88"
-                r={radius}
-                className="stroke-accent transition-all duration-300 ease-out"
-                strokeWidth="3.5"
-                strokeDasharray={circumference}
-                strokeDashoffset={strokeDashoffset}
-                strokeLinecap="round"
-                fill="transparent"
-              />
-            </svg>
+          {/* Positioning wrapper (Outer) */}
+          <div className="timer-position-wrapper relative">
+            {/* Rotation wrapper (Inner) */}
+            <div className={`timer-rotation-wrapper ${state.isRunning ? 'animate-timer-rock' : ''}`}>
+              {/* Innermost scaling/squashing/breathing wrapper */}
+              <div
+                key={squashTrigger}
+                className={`timer-scale-wrapper ${state.isRunning ? 'animate-timer-breathe' : ''} animate-timer-squash`}
+              >
+                <div className="relative w-44 h-44 flex items-center justify-center">
+                  {/* Circular Progress SVG */}
+                  <svg className="w-full h-full transform -rotate-90">
+                    {/* Background Circle */}
+                    <circle
+                      cx="88"
+                      cy="88"
+                      r={radius}
+                      className="stroke-surface0/60"
+                      strokeWidth="2.5"
+                      fill="transparent"
+                    />
+                    {/* Foreground Ring */}
+                    <circle
+                      cx="88"
+                      cy="88"
+                      r={radius}
+                      className="stroke-accent transition-all duration-300 ease-out"
+                      strokeWidth="3.5"
+                      strokeDasharray={circumference}
+                      strokeDashoffset={strokeDashoffset}
+                      strokeLinecap="round"
+                      fill="transparent"
+                    />
+                  </svg>
 
-            {/* Large Time Text */}
-            <div className="absolute flex flex-col items-center justify-center select-none">
-              <span className="text-[32px] font-extralight tracking-tighter text-text tabular-nums leading-none">
-                {formatTime(timeLeft)}
-              </span>
-              <span className="text-[8px] font-bold tracking-[0.25em] text-accent uppercase mt-2">
-                {state.sessionType === 'pomo' ? 'FOCUSING' : 'BREAK TIME'}
-              </span>
+                  {/* Large Time Text */}
+                  <div className="absolute flex flex-col items-center justify-center select-none">
+                    <span className="text-[32px] font-extralight tracking-tighter text-text tabular-nums leading-none">
+                      {formatTime(timeLeft)}
+                    </span>
+                    <span className="text-[8px] font-bold tracking-[0.25em] text-accent uppercase mt-2">
+                      {state.sessionType === 'pomo' ? 'FOCUSING' : 'BREAK TIME'}
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
+
+            {/* Ripple Pulse circle */}
+            {burstActive && (
+              <div className="absolute inset-0 border-2 border-accent rounded-full animate-ripple-ring pointer-events-none" />
+            )}
+
+
           </div>
 
           {/* Action Buttons */}
@@ -815,8 +887,8 @@ export default function App() {
 
       {/* Settings Modal */}
       {isSettingsOpen && (
-        <div className="absolute inset-0 bg-crust/50 backdrop-blur-[3px] z-50 flex items-center justify-center p-4 curtain-reveal-overlay">
-          <div className="bg-mantle border border-surface1/30 rounded-2xl w-full max-h-[90%] overflow-y-auto flex flex-col p-4 shadow-2xl origin-center animate-spring-in">
+        <div className="absolute inset-0 bg-crust/55 backdrop-blur-[3px] z-50 flex items-center justify-center p-4 curtain-reveal-overlay">
+          <div className="bg-mantle border border-surface1/30 rounded-2xl w-full max-h-[90%] overflow-y-auto flex flex-col p-4 shadow-2xl origin-center curtain-reveal-modal">
 
             {/* Modal Header */}
             <div className="flex justify-between items-center mb-3 pb-2 border-b border-surface1/20">
@@ -836,7 +908,7 @@ export default function App() {
             <div className="space-y-4 text-[11px]">
 
               {/* Theme Settings (Catppuccin Flavor) */}
-              <div>
+              <div className="domino-item" style={{ '--delay': '0.06s' } as React.CSSProperties}>
                 <h4 className="font-bold text-[10px] text-accent uppercase tracking-wider mb-2">Theme Flavor</h4>
                 <div className="grid grid-cols-2 gap-1.5">
                   {FLAVORS.map(flavor => (
@@ -854,7 +926,7 @@ export default function App() {
               </div>
 
               {/* Accent Color picker */}
-              <div>
+              <div className="domino-item" style={{ '--delay': '0.12s' } as React.CSSProperties}>
                 <h4 className="font-bold text-[10px] text-accent uppercase tracking-wider mb-1.5">Accent Color</h4>
                 <div className="flex gap-2 flex-wrap">
                   {ACCENTS.map(acc => (
@@ -875,42 +947,51 @@ export default function App() {
               </div>
 
               {/* Sound and Notification Toggles */}
-              <div className="space-y-2 pt-2 border-t border-surface1/20">
-                <label className="flex items-center justify-between cursor-pointer btn-squash py-0.5">
+              <div className="space-y-2 pt-2 border-t border-surface1/20 domino-item" style={{ '--delay': '0.18s' } as React.CSSProperties}>
+                <div
+                  onClick={() => setFormSound(!formSound)}
+                  className="flex items-center justify-between cursor-pointer btn-squash py-1.5 select-none"
+                >
                   <span className="font-medium text-text">Alarm Sound (Synth)</span>
-                  <input
-                    type="checkbox"
-                    checked={formSound}
-                    onChange={(e) => setFormSound(e.target.checked)}
-                    className="w-3.5 h-3.5 rounded text-accent focus:ring-accent border-surface2/40 bg-base cursor-pointer"
-                  />
-                </label>
+                  <div className={`todo-check ${formSound ? 'checked' : ''}`}>
+                    <div className="todo-check-bg"></div>
+                    <svg className="todo-check-icon" viewBox="0 0 10 10">
+                      <path d="M2 5 L4 7 L8 3" />
+                    </svg>
+                  </div>
+                </div>
 
-                <label className="flex items-center justify-between cursor-pointer btn-squash py-0.5">
+                <div
+                  onClick={() => setFormNotify(!formNotify)}
+                  className="flex items-center justify-between cursor-pointer btn-squash py-1.5 select-none"
+                >
                   <span className="font-medium text-text">Desktop Notifications</span>
-                  <input
-                    type="checkbox"
-                    checked={formNotify}
-                    onChange={(e) => setFormNotify(e.target.checked)}
-                    className="w-3.5 h-3.5 rounded text-accent focus:ring-accent border-surface2/40 bg-base cursor-pointer"
-                  />
-                </label>
+                  <div className={`todo-check ${formNotify ? 'checked' : ''}`}>
+                    <div className="todo-check-bg"></div>
+                    <svg className="todo-check-icon" viewBox="0 0 10 10">
+                      <path d="M2 5 L4 7 L8 3" />
+                    </svg>
+                  </div>
+                </div>
 
-                <label className="flex items-center justify-between cursor-pointer btn-squash py-0.5">
+                <div
+                  onClick={() => setFormAutoPlay(!formAutoPlay)}
+                  className="flex items-center justify-between cursor-pointer btn-squash py-1.5 select-none"
+                >
                   <span className="font-medium text-text">Auto-start Next Session</span>
-                  <input
-                    type="checkbox"
-                    checked={formAutoPlay}
-                    onChange={(e) => setFormAutoPlay(e.target.checked)}
-                    className="w-3.5 h-3.5 rounded text-accent focus:ring-accent border-surface2/40 bg-base cursor-pointer"
-                  />
-                </label>
+                  <div className={`todo-check ${formAutoPlay ? 'checked' : ''}`}>
+                    <div className="todo-check-bg"></div>
+                    <svg className="todo-check-icon" viewBox="0 0 10 10">
+                      <path d="M2 5 L4 7 L8 3" />
+                    </svg>
+                  </div>
+                </div>
               </div>
 
             </div>
 
             {/* Modal Actions */}
-            <div className="flex gap-2 mt-4">
+            <div className="flex gap-2 mt-4 domino-item" style={{ '--delay': '0.24s' } as React.CSSProperties}>
               <button
                 onClick={saveSettings}
                 className="flex-1 py-1.5 btn-bouncy-primary text-xs"

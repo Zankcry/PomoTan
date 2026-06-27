@@ -1,71 +1,58 @@
-/* PomoTan Anime-Inspired UI Style Sheet */
-
 /* Outer double border layout frame */
 .anime-theme-frame {
   position: absolute;
-  inset: 12px;
-  border-radius: 4px;
-  background-color: transparent;
-  box-shadow: none;
+  inset: 10px;
+  border-radius: 16px;
+  background-color: var(--ctp-base);
+  border: 1px solid var(--ctp-surface0);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
   transition: border-color 0.3s ease, outline-color 0.3s ease, background-color 0.3s ease;
   z-index: 10;
   box-sizing: border-box;
 }
 
-/* Corner crosses decorations */
-.corner-cross {
-  display: none;
-  position: absolute;
-  width: 9px;
-  height: 9px;
-  pointer-events: none;
-  color: var(--ctp-surface2);
-  z-index: 20;
-  transition: color 0.3s ease;
-}
-
-.corner-cross::before,
-.corner-cross::after {
+/* Dashed inner border for double border layout */
+.anime-theme-frame::before {
   content: '';
   position: absolute;
-  background-color: currentColor;
+  inset: 4px;
+  border-radius: 12px;
+  border: 1px dashed var(--ctp-surface1);
+  opacity: 0.4;
+  pointer-events: none;
 }
 
-/* Horizontal line */
-.corner-cross::before {
-  top: 4px;
+/* Weaving grid background */
+.weaving-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.grid-line-h {
+  position: absolute;
   left: 0;
-  width: 9px;
+  right: 0;
   height: 1px;
+  background: linear-gradient(90deg, transparent, var(--ctp-accent), transparent);
+  transform: scaleX(0);
+  transform-origin: center;
+  animation: weaving-grid-horizontal 1.8s var(--cb-elastic) var(--delay, 0s) both;
 }
 
-/* Vertical line */
-.corner-cross::after {
+.grid-line-v {
+  position: absolute;
   top: 0;
-  left: 4px;
+  bottom: 0;
   width: 1px;
-  height: 9px;
+  background: linear-gradient(180deg, transparent, var(--ctp-accent), transparent);
+  transform: scaleY(0);
+  transform-origin: center;
+  animation: weaving-grid-vertical 1.8s var(--cb-elastic) var(--delay, 0s) both;
 }
 
-.corner-top-left {
-  top: -5px;
-  left: -5px;
-}
 
-.corner-top-right {
-  top: -5px;
-  right: -5px;
-}
-
-.corner-bottom-left {
-  bottom: -5px;
-  left: -5px;
-}
-
-.corner-bottom-right {
-  bottom: -5px;
-  right: -5px;
-}
 
 /* Vertical Sidebar Text Decoration */
 .vertical-banner {
@@ -228,7 +215,8 @@
 }
 
 /* Hover effect on unchecked checkbox */
-.task-item-container:hover .todo-check:not(.checked) {
+.task-item-container:hover .todo-check:not(.checked),
+.btn-squash:hover .todo-check:not(.checked) {
   border-color: var(--ctp-overlay1);
 }
 
@@ -302,5 +290,142 @@
 .todo-text.checked::after {
   transform: scaleX(1);
 }
+
+/* BGM Selector Dropdown and Domino Animations */
+.bgm-dropdown-slide-in {
+  animation: dropdown-slide-down 0.4s var(--cb-bouncy) both;
+  transform-origin: top right;
+}
+
+@keyframes dropdown-slide-down {
+  0% { transform: translateY(-12px) scaleY(0.85); opacity: 0; }
+  60% { transform: translateY(3px) scaleY(1.02); }
+  85% { transform: translateY(-1px) scaleY(0.99); }
+  100% { transform: translateY(0) scaleY(1); opacity: 1; }
+}
+
+.domino-cascade-in {
+  opacity: 0;
+  transform: rotate(-8deg) translateY(6px);
+  transform-origin: left top;
+  animation: domino-fall-in 0.45s var(--cb-bouncy) var(--delay, 0s) both;
+}
+
+@keyframes domino-fall-in {
+  0% { transform: rotate(-8deg) translateY(6px); opacity: 0; }
+  60% { transform: rotate(2deg) translateY(-1px); opacity: 1; }
+  85% { transform: rotate(-1deg) translateY(0.5px); }
+  100% { transform: rotate(0deg) translateY(0); opacity: 1; }
+}
+
+/* Bouncy numbers transition */
+.number-bounce {
+  display: inline-block;
+  animation: num-bounce 0.35s var(--cb-bouncy) both;
+}
+
+@keyframes num-bounce {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.25) translateY(-1px); color: var(--ctp-accent); }
+  70% { transform: scale(0.95) translateY(0.5px); }
+  100% { transform: scale(1) translateY(0); }
+}
+
+/* Timer Display Animations */
+.timer-position-wrapper {
+  perspective: 700px;
+  position: relative;
+  width: 176px;
+  height: 176px;
+}
+
+.timer-rotation-wrapper {
+  width: 100%;
+  height: 100%;
+}
+
+.animate-timer-rock {
+  animation: timer-rock-loop 5.5s var(--cb-loop) infinite;
+}
+
+@keyframes timer-rock-loop {
+  0%, 100% { transform: rotate(-1.5deg); }
+  50% { transform: rotate(1.5deg); }
+}
+
+.timer-scale-wrapper {
+  width: 100%;
+  height: 100%;
+  transform-origin: center center;
+}
+
+.animate-timer-breathe {
+  animation: timer-breathe-loop 3.5s var(--cb-loop) infinite;
+}
+
+@keyframes timer-breathe-loop {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.025); }
+}
+
+.animate-timer-squash {
+  animation: squash-stretch 0.5s var(--cb-organic) both;
+}
+
+/* Ripple Ring */
+
+.animate-ripple-ring {
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--ctp-accent);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: ripple-pulse 0.65s var(--cb-organic) forwards;
+}
+
+/* Primary Button Shine Sweep reflection */
+.btn-bouncy-primary {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-bouncy-primary::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 30px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transform: skewX(-25deg);
+  left: -100%;
+  pointer-events: none;
+}
+
+.btn-bouncy-primary:hover::after {
+  animation: shine-sweep 0.75s var(--cb-organic) forwards;
+}
+
+/* Settings Modal Curtain Reveal & Domino Cascade */
+.curtain-reveal-modal {
+  animation: curtain-reveal-enter 0.55s var(--cb-organic) both;
+}
+
+.domino-item {
+  opacity: 0;
+  transform: rotateX(-8deg) translateY(10px);
+  transform-origin: top center;
+  animation: domino-item-fall 0.35s var(--cb-bouncy) var(--delay, 0s) both;
+}
+
+@keyframes domino-item-fall {
+  0% { transform: rotateX(-8deg) translateY(10px); opacity: 0; }
+  60% { transform: rotateX(2deg) translateY(-1px); opacity: 1; }
+  85% { transform: rotateX(-0.5deg) translateY(0.5px); }
+  100% { transform: rotateX(0deg) translateY(0); opacity: 1; }
+}
+
+
+
+
 
 

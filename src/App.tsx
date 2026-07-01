@@ -71,14 +71,22 @@ const FLAVORS = [
 ];
 
 const ACCENTS = [
+  { id: 'rosewater', name: 'Rosewater', color: '#dc8a78' },
+  { id: 'flamingo', name: 'Flamingo', color: '#dd7878' },
+  { id: 'pink', name: 'Pink', color: '#ea76cb' },
+  { id: 'mauve', name: 'Mauve', color: '#8839ef' },
+  { id: 'red', name: 'Red', color: '#d20f39' },
+  { id: 'maroon', name: 'Maroon', color: '#e64553' },
+  { id: 'peach', name: 'Peach', color: '#fe640b' },
+  { id: 'yellow', name: 'Yellow', color: '#df8e1d' },
   { id: 'green', name: 'Sage Green', color: '#40a02b' },
   { id: 'teal', name: 'Teal', color: '#179299' },
+  { id: 'sky', name: 'Sky', color: '#04a5e5' },
+  { id: 'sapphire', name: 'Sapphire', color: '#209fb5' },
   { id: 'blue', name: 'Blue', color: '#1e66f5' },
-  { id: 'mauve', name: 'Mauve', color: '#8839ef' },
-  { id: 'peach', name: 'Peach', color: '#fe640b' },
-  { id: 'pink', name: 'Pink', color: '#ea76cb' },
-  { id: 'red', name: 'Red', color: '#d20f39' },
+  { id: 'lavender', name: 'Lavender', color: '#7287fd' },
 ];
+
 
 const MUSIC_TRACKS = [
   { id: 'none', name: 'None (Silence)' },
@@ -939,7 +947,7 @@ export default function App() {
                       type="button"
                       onClick={() => setThemeAccent(acc.id)}
                       title={acc.name}
-                      style={{ backgroundColor: acc.color }}
+                      style={{ backgroundColor: `var(--ctp-${acc.id})` }}
                       className={`w-5 h-5 rounded-full relative transition-all duration-200 hover:scale-110 shadow-sm border border-black/5 flex items-center justify-center`}
                     >
                       {themeAccent === acc.id && (
